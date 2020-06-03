@@ -1186,6 +1186,11 @@ signal-exit@^3.0.2:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.3.tgz#a1410c2edd8f077b08b4e253c8eacfcaf057461c"
   integrity sha512-VUJ49FC8U1OxwZLxIbTTrDvLnf/6TDgxZcK8wxR8zs13xpx7xbG60ndBlhNrFi2EMuFRoeDoJO7wthSLq42EjA==
 
+simple-tcpscan@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/simple-tcpscan/-/simple-tcpscan-1.0.0.tgz#8692a5e2f6a2c83b8ef877c054be045ea8e76fc0"
+  integrity sha512-loZVDjJ8HRgbk9Lm8n6/R+ONiqRP8R/bEJl/NM1nImx+RJ5Ee6OoLwIgggv10tYPdHbhZguBhhWmIp1GAD6TnQ==
+
 slice-ansi@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/slice-ansi/-/slice-ansi-2.1.0.tgz#cacd7693461a637a5788d92a7dd4fba068e81636"
