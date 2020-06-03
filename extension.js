@@ -17,41 +17,54 @@ function activate(context) {
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with  registerCommand
 	// The commandId parameter must match the command field in package.json
-	let helloWorldCommand = vscode.commands.registerCommand('synerex-client-for-vscode.helloWorld', function () {
+	let startCommand = vscode.commands.registerCommand('synerexClient.start', function () {
 		// The code you place here will be executed every time your command is executed
 
 		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Synerex Client for VSCode!');
-		vscode.window.setStatusBarMessage('Synerex Hello World');
+		startSynerexServer();
 	});
 
-	let startCommand = vscode.commands.registerCommand('synerex-client-for-vscode.start', function () {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Started Synerex Client!');
-		vscode.window.setStatusBarMessage('Synerex ▷');
-	});
+	// let continuouslySynerexServerCommand = vscode.commands.registerCommand('extension.sayHello', () => {
+	// 	window.showInformationMessage('Hello World!');
+	// });
 
 	let type = "execStartTaskProv";
-	
-	const exec = new vscode.ShellExecution("echo \"Hello World\"");
-	vscode.tasks.executeTask(new vscode.Task({type: type}, vscode.TaskScope.Workspace,
-			"Build", "Synerex Client Extension", exec));
+	const channel = vscode.window.createOutputChannel("Synerex Server");
+	channel.appendLine('Loaded Synerex Client for VSCode.');
 
-	context.subscriptions.push(helloWorldCommand);
+	const launchOnWindowOpen = vscode.workspace.getConfiguration('synerexClient').get('launchOnWindowOpen');
+	console.log('synerexClient.launchOnWindowOpen: ', launchOnWindowOpen);
+
 	context.subscriptions.push(startCommand);
-
-	startSynerexServer();
+	
+	if(launchOnWindowOpen) startSynerexServer(channel);
 }
 exports.activate = activate;
 
 // this method is called when your extension is deactivated
 function deactivate() {}
 
-function startSynerexServer() {
-	const channel = vscode.window.createOutputChannel("Synerex Server");
-	const execution = new vscode.ShellExecution("echo \"Hello World\"");
+function startSynerexServer(channel) {
+	const synerexServerPath = vscode.workspace.getConfiguration('synerexClient').get('synerexServer');
+	const nodeServerPath = vscode.workspace.getConfiguration('synerexClient').get('nodeServer');
+	vscode.tasks.executeTask(new vscode.Task(
+		{type: 'synerexClient.synerexServer'},
+		vscode.TaskScope.Workspace,
+		"Synerex Server",
+		"Synerex Client Extension",
+		new vscode.ShellExecution(synerexServerPath)
+	));
+	channel.appendLine('Started Synerex Server.');
+	vscode.tasks.executeTask(new vscode.Task(
+		{type: 'synerexClient.nodeServer'},
+		vscode.TaskScope.Workspace,
+		"Node Server",
+		"Synerex Client Extension",
+		new vscode.ShellExecution(nodeServerPath)
+	));
+	channel.appendLine('Started Node Server.');
+	vscode.window.showInformationMessage('Started Synerex Client!');
+	vscode.window.setStatusBarMessage('Synerex ▷');
 }
 
 module.exports = {
