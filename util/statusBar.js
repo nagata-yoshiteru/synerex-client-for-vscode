@@ -1,19 +1,14 @@
 const vscode = require('vscode');
 
-const statusList = [
-    { attr: 'Synerex', label: 'SxSrv', status: 'loading', item: null, cmd: 'synerexClient.startSynerex' },
-    { attr: 'Node', label: 'NodeSrv', status: 'loading', item: null, cmd: 'synerexClient.startNode' },
-];
-
-function setStatus({attr, status}){
-    statusList.forEach( v => {
+function setStatus({attr, status, list}){
+    list.forEach( v => {
         if (v.attr === attr) v.status = status;
     });
-    showStatus();
+    showStatus(list);
 }
 
-function showStatus() {
-    statusList.forEach( v => {
+function showStatus(list) {
+    list.forEach( v => {
         if (v.item) v.item.dispose();
         v.item = vscode.window.createStatusBarItem();
         v.item.command = (v.status === 'play' || v.status === 'debug-start') ? v.cmd.replace('start', 'stop') : v.cmd;
@@ -24,5 +19,5 @@ function showStatus() {
 
 module.exports = {
 	setStatus,
-	showStatus
+	// showStatus,
 }
