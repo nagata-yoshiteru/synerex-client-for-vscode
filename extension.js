@@ -3,6 +3,7 @@
 const vscode = require('vscode');
 const tcpscan = require('simple-tcpscan');
 const statusBar = require('./util/statusBar');
+const installer = require('./util/installer');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -23,6 +24,8 @@ function activate(context) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "synerex-client-for-vscode" is now active!');
 	const channel = vscode.window.createOutputChannel("Synerex Client");
+
+	installer.installSynerexServer(context);
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with  registerCommand

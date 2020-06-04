@@ -6,3 +6,6 @@ vsc-extension-quickstart.md
 **/jsconfig.json
 **/*.map
 **/.eslintrc.json
+synerex_server/
+nodeinfo.json
+sxprofile.json
