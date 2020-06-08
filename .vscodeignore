@@ -9,3 +9,8 @@ vsc-extension-quickstart.md
 synerex_server/
 nodeinfo.json
 sxprofile.json
+webpack.config.js
+node_modules
+out/
+src/
+yarn-error.log

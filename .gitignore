@@ -2,5 +2,8 @@ node_modules
 .vscode-test/
 *.vsix
 synerex_server/
+synerex_nodeserv/
 nodeinfo.json
 sxprofile.json
+yarn-error.log
+dist/

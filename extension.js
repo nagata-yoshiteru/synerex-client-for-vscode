@@ -5,15 +5,14 @@ const tcpscan = require('simple-tcpscan');
 const statusBar = require('./util/statusBar');
 const installer = require('./util/installer');
 
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 
 const taskList = [
-    { attr: 'Synerex', name: 'Synerex Server', label: 'SxSrv', status: 'loading', item: null, cmd: 'synerexClient.startSynerex', stopping: false },
-    { attr: 'Node', name: 'Node Server', label: 'NodeSrv', status: 'loading', item: null, cmd: 'synerexClient.startNode', stopping: false },
+    { attr: 'Synerex', name: 'Synerex Server', label: 'SxSrv', status: 'loading', item: null, cmd: 'synerexClient.startSynerex', stopping: false, task: null, type: 'synerexClient.synerexServer' },
+    { attr: 'Node', name: 'Node Server', label: 'NodeSrv', status: 'loading', item: null, cmd: 'synerexClient.startNode', stopping: false, task: null, type: 'synerexClient.nodeServer' },
 ];
-let synerexTask = null;
-let nodeTask = null;
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -25,47 +24,41 @@ function activate(context) {
 	console.log('Congratulations, your extension "synerex-client-for-vscode" is now active!');
 	const channel = vscode.window.createOutputChannel("Synerex Client");
 
-	installer.installSynerexServer(context);
-
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with  registerCommand
 	// The commandId parameter must match the command field in package.json
 	let startClientCommand = vscode.commands.registerCommand('synerexClient.start', () => {
 		// The code you place here will be executed every time your command is executed
-		startSynerexClient(channel);
+		startSynerexClient(context, channel);
 	});
 
 	let startSynerexCommand = vscode.commands.registerCommand('synerexClient.startSynerex', () => {
-		startSynerexServer(channel);
+		startSynerexServer(context, channel);
 	});
 
 	let startNodeCommand = vscode.commands.registerCommand('synerexClient.startNode', () => {
-		startNodeServer(channel);
+		startNodeServer(context, channel);
 	});
 
-	vscode.commands.registerCommand('synerexClient.stopSynerex', () => {
-		if (synerexTask) synerexTask.terminate();
-		synerexTask = null;
-		taskList[0].stopping = true;
-	});
-
-	vscode.commands.registerCommand('synerexClient.stopNode', () => {
-		if (nodeTask) nodeTask.terminate();
-		nodeTask = null;
-		taskList[1].stopping = true;
-	});
+	vscode.commands.registerCommand('synerexClient.stopSynerex', () => stopTask(0));
+	vscode.commands.registerCommand('synerexClient.stopNode', () => stopTask(1));
 	
 	vscode.tasks.onDidEndTask( e => {
 		const { task } = e.execution;
-		channel.appendLine('Stopped ' + task.name + '.');
-		taskList.forEach( v => {
+		taskList.forEach( (v, i) => {
 			if (v.name === task.name) {
 				channel.appendLine('Stopped ' + task.name + '.');
 				statusBar.setStatus({ attr: v.attr, status: v.stopping ? 'debug-stop' : 'error', list: taskList });
 				v.stopping = false;
 			}
+			if ((v.name + ' Installation') === task.name) {
+				channel.appendLine('Installed ' + v.name + '.');
+				runBackgroundTask(context, channel, taskList[i],
+					i === 0 ? installer.getSynerexServerPath(context) : installer.getNodeServerPath(context)
+				);
+			}
 		});
-	});
+	});	
 
 	channel.appendLine('Loaded Synerex Client for VSCode.');
 
@@ -74,20 +67,20 @@ function activate(context) {
 
 	context.subscriptions.push(startClientCommand);
 	
-	if(launchOnWindowOpen) startSynerexClient(channel);
+	if(launchOnWindowOpen) startSynerexClient(context, channel);
 }
 exports.activate = activate;
 
 // this method is called when your extension is deactivated
 function deactivate() {}
 
-function startSynerexClient(channel) {
+function startSynerexClient(context, channel) {
 	vscode.window.showInformationMessage('Started Synerex Client!');
-	startSynerexServer(channel);
-	startNodeServer(channel);
+	startSynerexServer(context, channel);
+	startNodeServer(context, channel);
 }
 
-function startSynerexServer(channel) {
+function startSynerexServer(context, channel) {
 	statusBar.setStatus({ attr: 'Synerex', status: 'loading', list: taskList });
 	tcpscan.run({'host': 'localhost', 'port': 10000}).then(
 		() => {
@@ -97,37 +90,21 @@ function startSynerexServer(channel) {
 		},
 		() => {
 			const synerexServerPath = vscode.workspace.getConfiguration('synerexClient').get('synerexServer');
-			const newTask = new vscode.Task(
-				{type: 'synerexClient.synerexServer'},
-				vscode.TaskScope.Workspace,
-				"Synerex Server",
-				"Synerex Client Extension",
-				new vscode.ShellExecution(synerexServerPath)
-			);
-			newTask.isBackground = true;
-			newTask.presentationOptions = {
-				clear: true,
-				echo: false,
-				focus: false,
-				reveal: vscode.TaskRevealKind.Never,
-			}
-			vscode.tasks.executeTask(newTask).then(
-				task => {
-					synerexTask = task;
-					channel.appendLine('Started Synerex Server.');
-					statusBar.setStatus({ attr: 'Synerex', status: 'debug-start', list: taskList });
-				},
-				err => {
-					channel.appendLine('Cannot start Synerex Server.');
-					console.error(err);
-					statusBar.setStatus({ attr: 'Synerex', status: 'debug-stop', list: taskList });
+			if (!synerexServerPath) {
+				if (installer.isSynerexServerInstalled(context)) {
+					runBackgroundTask(context, channel, taskList[0], installer.getSynerexServerPath(context));
+				} else {
+					statusBar.setStatus({ attr: 'Synerex', status: 'info', list: taskList });
+					installer.installSynerexServer(context, channel, taskList);
 				}
-			);
+			} else {
+				runBackgroundTask(context, channel, taskList[0], synerexServerPath);
+			}
 		}
 	);
 }
 
-function startNodeServer(channel) {
+function startNodeServer(context, channel) {
 	statusBar.setStatus({ attr: 'Node', status: 'loading', list: taskList });
 	tcpscan.run({'host': 'localhost', 'port': 9990}).then(
 		() => {
@@ -137,34 +114,53 @@ function startNodeServer(channel) {
 		},
 		() => {
 			const nodeServerPath = vscode.workspace.getConfiguration('synerexClient').get('nodeServer');
-			const newTask = new vscode.Task(
-				{type: 'synerexClient.nodeServer'},
-				vscode.TaskScope.Workspace,
-				"Node Server",
-				"Synerex Client Extension",
-				new vscode.ShellExecution(nodeServerPath)
-			);
-			newTask.isBackground = true;
-			newTask.presentationOptions = {
-				clear: true,
-				echo: false,
-				focus: false,
-				reveal: vscode.TaskRevealKind.Never,
-			}
-			vscode.tasks.executeTask(newTask).then(
-				task => {
-					nodeTask = task;
-					channel.appendLine('Started Node Server.');
-					statusBar.setStatus({ attr: 'Node', status: 'debug-start', list: taskList });
-				},
-				err => {
-					channel.appendLine('Cannot start Node Server.');
-					console.error(err);
-					statusBar.setStatus({ attr: 'Node', status: 'debug-stop', list: taskList });
+			if (!nodeServerPath) {
+				if (installer.isNodeServerInstalled(context)) {
+					runBackgroundTask(context, channel, taskList[1], installer.getNodeServerPath(context));
+				} else {
+					statusBar.setStatus({ attr: 'Node', status: 'info', list: taskList });
+					installer.installNodeServer(context, channel, taskList);
 				}
-			);
+			} else {
+				runBackgroundTask(context, channel, taskList[1], nodeServerPath);
+			}
 		}
 	);
+}
+
+function runBackgroundTask(context, channel, taskInfo, binaryPath) {
+	const newTask = new vscode.Task(
+		{type: taskInfo.type},
+		vscode.TaskScope.Workspace,
+		taskInfo.name,
+		"Synerex Client Extension",
+		new vscode.ShellExecution(binaryPath)
+	);
+	newTask.isBackground = true;
+	newTask.presentationOptions = {
+		clear: true,
+		echo: false,
+		focus: false,
+		reveal: vscode.TaskRevealKind.Never,
+	}
+	vscode.tasks.executeTask(newTask).then(
+		task => {
+			taskInfo.task = task;
+			channel.appendLine('Started ' + taskInfo.name + '.');
+			statusBar.setStatus({ attr: taskInfo.attr, status: 'debug-start', list: taskList });
+		},
+		err => {
+			channel.appendLine('Cannot start ' + taskInfo.name + '.');
+			console.error(err);
+			statusBar.setStatus({ attr: taskInfo.attr, status: 'debug-stop', list: taskList });
+		}
+	);
+}
+
+function stopTask(no) {
+	if (taskList[no].task) taskList[no].task.terminate();
+	taskList[no].task = null;
+	taskList[no].stopping = true;
 }
 
 module.exports = {
