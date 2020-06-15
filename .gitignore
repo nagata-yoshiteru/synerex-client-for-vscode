@@ -7,3 +7,4 @@ nodeinfo.json
 sxprofile.json
 yarn-error.log
 dist/
+provider_proxy/
