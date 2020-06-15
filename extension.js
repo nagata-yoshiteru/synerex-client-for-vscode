@@ -10,7 +10,7 @@ const installer = require('./util/installer');
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 
-const taskList = [
+const srvList = [
 	{
 		attr: 'Synerex',
 		name: 'Synerex Server',
@@ -60,11 +60,11 @@ function activate(context) {
 	});
 
 	let startSynerexCommand = vscode.commands.registerCommand('synerexClient.startSynerex', () => {
-		startSynerexServer(context, channel);
+		startSrv(context, channel, srvList[0]);
 	});
 
 	let startNodeCommand = vscode.commands.registerCommand('synerexClient.startNode', () => {
-		startNodeServer(context, channel);
+		startSrv(context, channel, srvList[1]);
 	});
 
 	vscode.commands.registerCommand('synerexClient.stopSynerex', () => stopTask(0));
@@ -72,15 +72,15 @@ function activate(context) {
 
 	vscode.tasks.onDidEndTask(e => {
 		const { task } = e.execution;
-		taskList.forEach((v, i) => {
+		srvList.forEach((v, i) => {
 			if (v.name === task.name) {
 				channel.appendLine('Stopped ' + task.name + '.');
-				statusBar.setStatus({ attr: v.attr, status: v.stopping ? 'debug-stop' : 'error', list: taskList });
+				statusBar.setStatus({ attr: v.attr, status: v.stopping ? 'debug-stop' : 'error', list: srvList });
 				v.stopping = false;
 			}
 			if ((v.name + ' Installation') === task.name) {
 				channel.appendLine('Installed ' + v.name + '.');
-				runBackgroundTask(context, channel, taskList[i], installer.getSrvPath(context, taskList[i]), installer.getSrvDir(context, taskList[i]));
+				runBackgroundTask(context, channel, srvList[i], installer.getSrvPath(context, srvList[i]), installer.getSrvDir(context, srvList[i]));
 			}
 		});
 	});
@@ -97,67 +97,45 @@ function activate(context) {
 exports.activate = activate;
 
 // this method is called when your extension is deactivated
-function deactivate() { }
+function deactivate() {
+	srvList.forEach((_, i) => stopTask(i));
+}
 
 function startSynerexClient(context, channel) {
 	vscode.window.showInformationMessage('Started Synerex Client!');
-	startSynerexServer(context, channel);
-	startNodeServer(context, channel);
+	startSrv(context, channel, srvList[0]);
+	startSrv(context, channel, srvList[1]);
 }
 
-function startSynerexServer(context, channel) {
-	statusBar.setStatus({ attr: 'Synerex', status: 'loading', list: taskList });
-	tcpscan.run({ 'host': 'localhost', 'port': 10000 }).then(
+function startSrv(context, channel, srv) {
+	statusBar.setStatus({ attr: srv.attr, status: 'loading', list: srvList });
+	tcpscan.run({ host: 'localhost', port: srv.port }).then(
 		() => {
-			vscode.window.showWarningMessage('Synerex Server seems to be already running.');
-			channel.appendLine('Synerex Server seems to be already running.');
-			statusBar.setStatus({ attr: 'Synerex', status: 'warning', list: taskList });
+			vscode.window.showWarningMessage(srv.name + ' seems to be already running.');
+			channel.appendLine(srv.name + ' seems to be already running.');
+			statusBar.setStatus({ attr: srv.attr, status: 'warning', list: srvList });
 		},
 		() => {
-			const synerexServerPath = vscode.workspace.getConfiguration('synerexClient').get('synerexServer');
-			if (!synerexServerPath) {
-				if (installer.isSrvInstalled(context, taskList[0])) {
-					runBackgroundTask(context, channel, taskList[0], installer.getSrvPath(context, taskList[0]), installer.getSrvDir(context, taskList[0]));
+			const srvPath = vscode.workspace.getConfiguration('synerexClient').get(srv.type.replace('synerexClient.',''));
+			if (!srvPath || srvPath === '') {
+				if (installer.isSrvInstalled(context, srv)) {
+					runBackgroundTask(context, channel, srv, installer.getSrvPath(context, srv), installer.getSrvDir(context, srv));
 				} else {
-					statusBar.setStatus({ attr: 'Synerex', status: 'info', list: taskList });
-					installer.installSrv(context, channel, taskList, taskList[0]);
+					statusBar.setStatus({ attr: srv.attr, status: 'info', list: srvList });
+					installer.installSrv(context, channel, srvList, srv);
 				}
 			} else {
-				runBackgroundTask(context, channel, taskList[0], synerexServerPath, path.dirname(synerexServerPath));
+				runBackgroundTask(context, channel, srv, srvPath, path.dirname(srvPath));
 			}
 		}
 	);
 }
 
-function startNodeServer(context, channel) {
-	statusBar.setStatus({ attr: 'Node', status: 'loading', list: taskList });
-	tcpscan.run({ 'host': 'localhost', 'port': 9990 }).then(
-		() => {
-			vscode.window.showWarningMessage('Node Server seems to be already running.');
-			channel.appendLine('Node Server seems to be already running.');
-			statusBar.setStatus({ attr: 'Node', status: 'warning', list: taskList });
-		},
-		() => {
-			const nodeServerPath = vscode.workspace.getConfiguration('synerexClient').get('nodeServer');
-			if (!nodeServerPath) {
-				if (installer.isSrvInstalled(context, taskList[1])) {
-					runBackgroundTask(context, channel, taskList[1], installer.getSrvPath(context, taskList[1]), installer.getSrvDir(context, taskList[1]));
-				} else {
-					statusBar.setStatus({ attr: 'Node', status: 'info', list: taskList });
-					installer.installSrv(context, channel, taskList, taskList[1]);
-				}
-			} else {
-				runBackgroundTask(context, channel, taskList[1], nodeServerPath, path.dirname(nodeServerPath));
-			}
-		}
-	);
-}
-
-function runBackgroundTask(context, channel, taskInfo, binaryPath, binaryDir) {
+function runBackgroundTask(context, channel, srv, binaryPath, binaryDir) {
 	const newTask = new vscode.Task(
-		{ type: taskInfo.type },
+		{ type: srv.type },
 		vscode.TaskScope.Workspace,
-		taskInfo.name,
+		srv.name,
 		'Synerex Client',
 		new vscode.ShellExecution(binaryPath, { cwd: binaryDir })
 	);
@@ -170,22 +148,22 @@ function runBackgroundTask(context, channel, taskInfo, binaryPath, binaryDir) {
 	}
 	vscode.tasks.executeTask(newTask).then(
 		task => {
-			taskInfo.task = task;
-			channel.appendLine('Started ' + taskInfo.name + '.');
-			statusBar.setStatus({ attr: taskInfo.attr, status: 'debug-start', list: taskList });
+			srv.task = task;
+			channel.appendLine('Started ' + srv.name + '.');
+			statusBar.setStatus({ attr: srv.attr, status: 'debug-start', list: srvList });
 		},
 		err => {
-			channel.appendLine('Cannot start ' + taskInfo.name + '.');
+			channel.appendLine('Cannot start ' + srv.name + '.');
 			console.error(err);
-			statusBar.setStatus({ attr: taskInfo.attr, status: 'debug-stop', list: taskList });
+			statusBar.setStatus({ attr: srv.attr, status: 'debug-stop', list: srvList });
 		}
 	);
 }
 
 function stopTask(no) {
-	if (taskList[no].task) taskList[no].task.terminate();
-	taskList[no].task = null;
-	taskList[no].stopping = true;
+	if (srvList[no].task) srvList[no].task.terminate();
+	srvList[no].task = null;
+	srvList[no].stopping = true;
 }
 
 module.exports = {

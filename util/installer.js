@@ -29,7 +29,7 @@ function installSrv (context, channel, taskList, srv) {
             vscode.TaskScope.Workspace,
             srv.name + ' Installation',
             'Synerex Client',
-            new vscode.ShellExecution(".\\build.bat", { cwd: srvDir })
+            new vscode.ShellExecution(isWin ? ".\\build.bat" : "make", { cwd: srvDir })
         )).then( te => {
             statusBar.setStatus({ attr: srv.attr, status: 'loading', list: taskList });
             channel.appendLine('Installing ' + srv.name + '...');
