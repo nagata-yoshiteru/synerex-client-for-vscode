@@ -7,7 +7,7 @@
 		"type": "git",
 		"url": "https://github.com/nagata-yoshiteru/synerex-client-for-vscode"
 	},
-	"version": "0.0.5",
+	"version": "0.1.0",
 	"engines": {
 		"vscode": "^1.45.0"
 	},
@@ -44,7 +44,7 @@
 				"synerexClient.launchOnWindowOpen": {
 					"type": "boolean",
 					"default": false,
-					"description": "If enabled, launch Synerex Server and Node Server on VSCode window open."
+					"description": "If enabled, launch Synerex Server and Node Server when a VSCode workspace which contains `.synerex` file opend."
 				},
 				"synerexClient.synerexServer": {
 					"type": [
@@ -69,6 +69,21 @@
 					],
 					"default": null,
 					"description": "Specifies the path to Proxy Provider. If not specified, extension will install it automatically."
+				},
+				"synerexClient.synerexServerEnabled": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether to use Synerex Server."
+				},
+				"synerexClient.nodeServerEnabled": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether to use Node Server."
+				},
+				"synerexClient.proxyProviderEnabled": {
+					"type": "boolean",
+					"default": false,
+					"description": "Whether to use Proxy Provider."
 				}
 			}
 		},

@@ -10,6 +10,7 @@ function setStatus({attr, status, list}){
 function showStatus(list) {
     list.forEach( v => {
         if (v.item) v.item.dispose();
+        if (!v.enabled) return;
         v.item = vscode.window.createStatusBarItem();
         v.item.command = (v.status === 'play' || v.status === 'debug-start') ? v.cmd.replace('start', 'stop') : v.cmd;
         v.item.text = v.label + '$(' + v.status + ')';

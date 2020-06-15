@@ -1,9 +1,26 @@
 # Change Log
 
-All notable changes to the "synerex-client-for-vscode" extension will be documented in this file.
+### 0.1.0
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+- Add Proxy Provider Support
+- Add Enable / Disable Feature
 
-## [Unreleased]
+### 0.0.5, 0.0.4
 
-- Initial release
+- Internal System Update.
+
+### 0.0.3
+
+- macOS / Linux Support.
+- Refactor.
+
+### 0.0.2
+
+- Improved working directory selection behavior.
+
+### 0.0.1
+
+- Initial beta release of Synerex Client for Visual Studio Code.
+
+
+

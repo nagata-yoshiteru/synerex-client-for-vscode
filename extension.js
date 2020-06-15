@@ -74,10 +74,13 @@ function activate(context) {
 	});
 
 	srvList.forEach((srv, i) => {
-		vscode.commands.registerCommand(srv.cmd, () => {
-			startSrv(context, channel, srv);
-		});
-		vscode.commands.registerCommand(srv.cmd.replace('.start', '.stop'), () => stopTask(i));
+		srv.enabled = vscode.workspace.getConfiguration('synerexClient').get(srv.type.replace('synerexClient.','') + 'Enabled');
+		if (srv.enabled) {
+			vscode.commands.registerCommand(srv.cmd, () => {
+				startSrv(context, channel, srv);
+			});
+			vscode.commands.registerCommand(srv.cmd.replace('.start', '.stop'), () => stopTask(i));
+		}
 	});
 
 	vscode.tasks.onDidEndTask(e => {
@@ -113,7 +116,7 @@ function deactivate() {
 
 function startSynerexClient(context, channel) {
 	vscode.window.showInformationMessage('Started Synerex Client!');
-	srvList.forEach(srv => startSrv(context, channel, srv));
+	srvList.forEach(srv => srv.enabled ? startSrv(context, channel, srv) : {});
 }
 
 function startSrv(context, channel, srv) {
