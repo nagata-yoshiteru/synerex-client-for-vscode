@@ -6,14 +6,7 @@ Synerex Client for Visual Studio Code
 ## Features
 
 - Auto start Synerex / Node Server on startup.
-
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+- Auto Install Synerex / Node Server.
 
 
 ## Requirements
@@ -25,29 +18,25 @@ For example if there is an image subfolder under your extension project workspac
 
 This extension contributes the following settings:
 
-* `synerexClient.launchOnWindowOpen`: If enabled, launch Synerex Server and Node Server on VSCode window open.
+* `synerexClient.launchOnWindowOpen`: If enabled, launch Synerex Server and Node Server when a VSCode workspace which contains `.synerex` file opend.
 * `synerexClient.synerexServer`: Specifies the path to Synerex Server.
 * `synerexClient.nodeServer` : Specifies the path to Node Server.
 
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+- Some Windows Environments cannot install Servers automatically. 
 
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 0.0.1
 
-### 1.0.0
+- Initial beta release of Synerex Client for Visual Studio Code.
 
-Initial release of ...
+### 0.0.2
 
-### 1.0.1
+- Improved working directory selection behavior.
 
-Fixed issue #.
 
-### 1.1.0
-
-Added features X, Y, and Z.
 
