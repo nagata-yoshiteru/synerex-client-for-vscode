@@ -30,6 +30,10 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+### 0.0.4
+
+- Internal System Update.
+
 ### 0.0.3
 
 - macOS / Linux Support.
