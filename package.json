@@ -76,6 +76,7 @@
 		"vscode:prepublish": "webpack --mode production || echo webpack-fail",
 		"webpack": "webpack --mode development",
 		"webpack-dev": "webpack --mode development --watch",
+		"start": "yarn webpack-dev",
 		"test-compile": "tsc -p ./"
 	},
 	"devDependencies": {

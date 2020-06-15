@@ -5,76 +5,42 @@ const clone = require('git-clone');
 const statusBar = require('./statusBar');
 const isWin = process.platform === 'win32';
 
-const getSynerexServerPath = (context) => path.join(context.extensionPath, "synerex_server", "synerex-server" + (isWin ? ".exe" : ""));
-const getNodeServerPath = (context) => path.join(context.extensionPath, "synerex_nodeserv", "nodeserv" + (isWin ? ".exe" : ""));
+const getSrvPath = (context, srv) => path.join(context.extensionPath, srv.repo, srv.binary + (isWin ? ".exe" : ""));
+const getSrvDir = (context, srv) => path.join(context.extensionPath, srv.repo);
 
-function isSynerexServerInstalled (context) {
-    const synerexServerPath = getSynerexServerPath(context);
+function isSrvInstalled (context, srv) {
+    const srvPath = getSrvPath(context, srv);
     try {
-        fs.statSync(synerexServerPath);
+        fs.statSync(srvPath);
         return true;
     } catch (error) {
         return false;
     }
 }
 
-function isNodeServerInstalled (context) {
-    const nodeServerPath = getNodeServerPath(context);
-    try {
-        fs.statSync(nodeServerPath);
-        return true;
-    } catch (error) {
-        return false;
-    }
-}
-
-function installSynerexServer (context, channel, taskList) {
-    vscode.window.showInformationMessage('Downloading and Installing Synerex Server...');
-    const synerexServerPath = path.join(context.extensionPath, "synerex_server/");
-    statusBar.setStatus({ attr: 'Synerex', status: 'cloud-download', list: taskList });
-    clone('https://github.com/synerex/synerex_server', synerexServerPath, {}, err => {
-        channel.appendLine(err ? 'Downloading github.com/synerex/synerex_server Error.' : 'Successfully Downloaded github.com/synerex/synerex_server.');
+function installSrv (context, channel, taskList, srv) {
+    vscode.window.showInformationMessage('Downloading and Installing ' + srv.name + '...');
+    const srvDir = getSrvDir(context, srv);
+    statusBar.setStatus({ attr: srv.attr, status: 'cloud-download', list: taskList });
+    clone('https://github.com/synerex/' + srv.repo, srvDir, {}, err => {
+        channel.appendLine(err ? 'Downloading github.com/synerex/' + srv.repo + ' Error.' : 'Successfully Downloaded github.com/synerex/' + srv.repo + '.');
         vscode.tasks.executeTask(new vscode.Task(
-            {type: 'install synerex_server'},
+            {type: 'install ' + srv.repo},
             vscode.TaskScope.Global,
-            'Synerex Server Installation',
+            srv.name + ' Installation',
             'Synerex Client',
-            new vscode.ShellExecution("cd " + synerexServerPath + "; .\\build.bat")
+            new vscode.ShellExecution(".\\build.bat", { cwd: srvDir })
         )).then( te => {
-            statusBar.setStatus({ attr: 'Synerex', status: 'loading', list: taskList });
-            channel.appendLine("Installing Synerex Server...");
+            statusBar.setStatus({ attr: srv.attr, status: 'loading', list: taskList });
+            channel.appendLine('Installing ' + srv.name + '...');
         }, err => {
-            channel.appendLine("Installing Synerex Server Failed.");
-        });
-    });
-}
-
-function installNodeServer (context, channel, taskList) {
-    vscode.window.showInformationMessage('Downloading and Installing Node Server...');
-    const nodeServerPath = path.join(context.extensionPath, "synerex_nodeserv/");
-    statusBar.setStatus({ attr: 'Node', status: 'cloud-download', list: taskList });
-    clone('https://github.com/synerex/synerex_nodeserv', nodeServerPath, {}, err => {
-        channel.appendLine(err ? 'Downloading github.com/synerex/synerex_nodeserv Error.' : 'Successfully Downloaded github.com/synerex/synerex_nodeserv.');
-        vscode.tasks.executeTask(new vscode.Task(
-            {type: 'install synerex_nodeserv'},
-            vscode.TaskScope.Global,
-            'Node Server Installation',
-            'Synerex Client',
-            new vscode.ShellExecution("cd " + nodeServerPath + "; .\\build.bat")
-        )).then( te => {
-            statusBar.setStatus({ attr: 'Node', status: 'sync', list: taskList });
-            channel.appendLine("Installing Node Server...");
-        }, err => {
-            channel.appendLine("Installing Node Server Failed.");
+            channel.appendLine('Installing ' + srv.name + ' Failed.');
         });
     });
 }
 
 module.exports = {
-    getSynerexServerPath,
-    getNodeServerPath,
-    isSynerexServerInstalled,
-    isNodeServerInstalled,
-    installSynerexServer,
-    installNodeServer,
+    getSrvPath,
+    isSrvInstalled,
+    installSrv,
 }
