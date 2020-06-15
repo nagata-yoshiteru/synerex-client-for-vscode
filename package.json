@@ -79,7 +79,7 @@
 		"start": "yarn webpack-dev",
 		"build": "vsce package",
 		"test-compile": "tsc -p ./",
-		"deploy": "vsce publish --yarn"
+		"deploy": "vsce publish --yarn --pat ${{ secrets.VSCE_PAT }}"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.1",
