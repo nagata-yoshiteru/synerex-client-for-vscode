@@ -1,0 +1,35 @@
+env:
+  NODE_VERSION: 10.x
+
+on:
+  push:
+    branches:
+    - master
+  release:
+    types:
+    - created
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Install node_modules
+      run: yarn
+    - name: Run Tests
+      uses: GabrielBB/xvfb-action@v1.2
+      with:
+        run: yarn test
+    - name: Publish
+      if: success() && startsWith( github.ref, 'refs/tags/releases/') && matrix.os == 'ubuntu-latest'
+      run: npm run deploy
+      env:
+        VSCE_PAT: $

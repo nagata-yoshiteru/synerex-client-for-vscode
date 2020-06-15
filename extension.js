@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
+const path = require('path');
 const tcpscan = require('simple-tcpscan');
 const statusBar = require('./util/statusBar');
 const installer = require('./util/installer');
@@ -79,7 +80,7 @@ function activate(context) {
 			}
 			if ((v.name + ' Installation') === task.name) {
 				channel.appendLine('Installed ' + v.name + '.');
-				runBackgroundTask(context, channel, taskList[i], installer.getSrvPath(context, taskList[i]));
+				runBackgroundTask(context, channel, taskList[i], installer.getSrvPath(context, taskList[i]), installer.getSrvDir(context, taskList[i]));
 			}
 		});
 	});
@@ -116,13 +117,13 @@ function startSynerexServer(context, channel) {
 			const synerexServerPath = vscode.workspace.getConfiguration('synerexClient').get('synerexServer');
 			if (!synerexServerPath) {
 				if (installer.isSrvInstalled(context, taskList[0])) {
-					runBackgroundTask(context, channel, taskList[0], installer.getSrvPath(context, taskList[0]));
+					runBackgroundTask(context, channel, taskList[0], installer.getSrvPath(context, taskList[0]), installer.getSrvDir(context, taskList[0]));
 				} else {
 					statusBar.setStatus({ attr: 'Synerex', status: 'info', list: taskList });
 					installer.installSrv(context, channel, taskList, taskList[0]);
 				}
 			} else {
-				runBackgroundTask(context, channel, taskList[0], synerexServerPath);
+				runBackgroundTask(context, channel, taskList[0], synerexServerPath, path.dirname(synerexServerPath));
 			}
 		}
 	);
@@ -140,25 +141,25 @@ function startNodeServer(context, channel) {
 			const nodeServerPath = vscode.workspace.getConfiguration('synerexClient').get('nodeServer');
 			if (!nodeServerPath) {
 				if (installer.isSrvInstalled(context, taskList[1])) {
-					runBackgroundTask(context, channel, taskList[1], installer.getSrvPath(context, taskList[1]));
+					runBackgroundTask(context, channel, taskList[1], installer.getSrvPath(context, taskList[1]), installer.getSrvDir(context, taskList[1]));
 				} else {
 					statusBar.setStatus({ attr: 'Node', status: 'info', list: taskList });
 					installer.installSrv(context, channel, taskList, taskList[1]);
 				}
 			} else {
-				runBackgroundTask(context, channel, taskList[1], nodeServerPath);
+				runBackgroundTask(context, channel, taskList[1], nodeServerPath, path.dirname(nodeServerPath));
 			}
 		}
 	);
 }
 
-function runBackgroundTask(context, channel, taskInfo, binaryPath) {
+function runBackgroundTask(context, channel, taskInfo, binaryPath, binaryDir) {
 	const newTask = new vscode.Task(
 		{ type: taskInfo.type },
 		vscode.TaskScope.Workspace,
 		taskInfo.name,
-		"Synerex Client Extension",
-		new vscode.ShellExecution(binaryPath)
+		'Synerex Client',
+		new vscode.ShellExecution(binaryPath, { cwd: binaryDir })
 	);
 	newTask.isBackground = true;
 	newTask.presentationOptions = {

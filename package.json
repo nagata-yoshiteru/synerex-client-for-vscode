@@ -77,7 +77,9 @@
 		"webpack": "webpack --mode development",
 		"webpack-dev": "webpack --mode development --watch",
 		"start": "yarn webpack-dev",
-		"test-compile": "tsc -p ./"
+		"build": "vsce package",
+		"test-compile": "tsc -p ./",
+		"deploy": "vsce publish --yarn"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.1",
@@ -88,6 +90,7 @@
 		"glob": "^7.1.6",
 		"mocha": "^7.1.2",
 		"typescript": "^3.8.3",
+		"vsce": "^1.76.1",
 		"vscode-test": "^1.3.0",
 		"webpack": "^4.43.0",
 		"webpack-cli": "^3.3.11"

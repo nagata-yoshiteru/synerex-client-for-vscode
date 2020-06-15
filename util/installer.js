@@ -26,7 +26,7 @@ function installSrv (context, channel, taskList, srv) {
         channel.appendLine(err ? 'Downloading github.com/synerex/' + srv.repo + ' Error.' : 'Successfully Downloaded github.com/synerex/' + srv.repo + '.');
         vscode.tasks.executeTask(new vscode.Task(
             {type: 'install ' + srv.repo},
-            vscode.TaskScope.Global,
+            vscode.TaskScope.Workspace,
             srv.name + ' Installation',
             'Synerex Client',
             new vscode.ShellExecution(".\\build.bat", { cwd: srvDir })
@@ -41,6 +41,7 @@ function installSrv (context, channel, taskList, srv) {
 
 module.exports = {
     getSrvPath,
+    getSrvDir,
     isSrvInstalled,
     installSrv,
 }
