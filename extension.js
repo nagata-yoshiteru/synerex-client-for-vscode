@@ -39,6 +39,20 @@ const srvList = [
 		binary: 'nodeserv',
 		port: 9990,
 	},
+	{
+		attr: 'ProxyPrv',
+		name: 'Proxy Provider',
+		label: 'ProxyPrv',
+		status: 'loading',
+		item: null,
+		cmd: 'synerexClient.startProxyPrv',
+		stopping: false,
+		task: null,
+		type: 'synerexClient.proxyProvider',
+		repo: 'provider_proxy',
+		binary: 'proxy',
+		port: 18000,
+	},
 ];
 
 /**
@@ -59,16 +73,12 @@ function activate(context) {
 		startSynerexClient(context, channel);
 	});
 
-	let startSynerexCommand = vscode.commands.registerCommand('synerexClient.startSynerex', () => {
-		startSrv(context, channel, srvList[0]);
+	srvList.forEach((srv, i) => {
+		vscode.commands.registerCommand(srv.cmd, () => {
+			startSrv(context, channel, srv);
+		});
+		vscode.commands.registerCommand(srv.cmd.replace('.start', '.stop'), () => stopTask(i));
 	});
-
-	let startNodeCommand = vscode.commands.registerCommand('synerexClient.startNode', () => {
-		startSrv(context, channel, srvList[1]);
-	});
-
-	vscode.commands.registerCommand('synerexClient.stopSynerex', () => stopTask(0));
-	vscode.commands.registerCommand('synerexClient.stopNode', () => stopTask(1));
 
 	vscode.tasks.onDidEndTask(e => {
 		const { task } = e.execution;
@@ -103,8 +113,7 @@ function deactivate() {
 
 function startSynerexClient(context, channel) {
 	vscode.window.showInformationMessage('Started Synerex Client!');
-	startSrv(context, channel, srvList[0]);
-	startSrv(context, channel, srvList[1]);
+	srvList.forEach(srv => startSrv(context, channel, srv));
 }
 
 function startSrv(context, channel, srv) {

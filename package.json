@@ -27,11 +27,15 @@
 			},
 			{
 				"command": "synerexClient.startSynerex",
-				"title": "Start Synerex Server"
+				"title": "Start Synerex Server - Synerex Client"
 			},
 			{
 				"command": "synerexClient.startNode",
-				"title": "Start Node Server"
+				"title": "Start Node Server - Synerex Client"
+			},
+			{
+				"command": "synerexClient.startProxyPrv",
+				"title": "Start Proxy Provider - Synerex Client"
 			}
 		],
 		"configuration": {
@@ -48,7 +52,7 @@
 						"null"
 					],
 					"default": null,
-					"description": "Specifies the path to Synerex Server."
+					"description": "Specifies the path to Synerex Server. If not specified, extension will install it automatically."
 				},
 				"synerexClient.nodeServer": {
 					"type": [
@@ -56,7 +60,15 @@
 						"null"
 					],
 					"default": null,
-					"description": "Specifies the path to Node Server."
+					"description": "Specifies the path to Node Server. If not specified, extension will install it automatically."
+				},
+				"synerexClient.proxyProvider": {
+					"type": [
+						"string",
+						"null"
+					],
+					"default": null,
+					"description": "Specifies the path to Proxy Provider. If not specified, extension will install it automatically."
 				}
 			}
 		},
