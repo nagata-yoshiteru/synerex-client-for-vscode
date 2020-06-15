@@ -30,13 +30,18 @@ This extension contributes the following settings:
 
 ## Release Notes
 
-### 0.0.1
+### 0.0.3
 
-- Initial beta release of Synerex Client for Visual Studio Code.
+- macOS / Linux Support.
+- Refactor.
 
 ### 0.0.2
 
 - Improved working directory selection behavior.
+
+### 0.0.1
+
+- Initial beta release of Synerex Client for Visual Studio Code.
 
 
 
