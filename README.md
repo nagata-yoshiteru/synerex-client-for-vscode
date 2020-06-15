@@ -1,7 +1,6 @@
-# synerex-client-for-vscode README
-
-Synerex Client for Visual Studio Code
-
+# Synerex Client for Visual Studio Code
+![master](https://github.com/nagata-yoshiteru/synerex-client-for-vscode/workflows/master/badge.svg)
+![release](https://github.com/nagata-yoshiteru/synerex-client-for-vscode/workflows/release/badge.svg)
 
 ## Features
 
