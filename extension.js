@@ -154,9 +154,9 @@ function runBackgroundTask(context, channel, srv, binaryPath, binaryDir) {
 	newTask.isBackground = true;
 	newTask.presentationOptions = {
 		clear: true,
-		// echo: false,
+		echo: false,
 		focus: false,
-		// reveal: vscode.TaskRevealKind.Never,
+		reveal: vscode.TaskRevealKind.Silent,
 	}
 	vscode.tasks.executeTask(newTask).then(
 		task => {
