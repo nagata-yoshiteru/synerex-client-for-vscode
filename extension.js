@@ -85,6 +85,7 @@ function activate(context) {
 
 	vscode.tasks.onDidEndTask(e => {
 		const { task } = e.execution;
+		console.log(task);
 		srvList.forEach((v, i) => {
 			if (v.name === task.name) {
 				channel.appendLine('Stopped ' + task.name + '.');
@@ -156,7 +157,7 @@ function runBackgroundTask(context, channel, srv, binaryPath, binaryDir) {
 		clear: true,
 		echo: false,
 		focus: false,
-		reveal: vscode.TaskRevealKind.Silent,
+		reveal: vscode.TaskRevealKind.Never,
 	}
 	vscode.tasks.executeTask(newTask).then(
 		task => {
