@@ -16,3 +16,7 @@ out/
 src/
 yarn-error.log
 provider_proxy/
+provider_harmovis_layers/
+.github/
+util/
+extension.js

@@ -21,7 +21,7 @@ function isSrvInstalled (context, srv) {
 function installSrv (context, channel, taskList, srv) {
     vscode.window.showInformationMessage('Downloading and Installing ' + srv.name + '...');
     const srvDir = getSrvDir(context, srv);
-    statusBar.setStatus({ attr: srv.attr, status: 'cloud-download', list: taskList });
+    statusBar.setStatus({ label: srv.label, status: 'cloud-download', list: taskList });
     clone('https://github.com/synerex/' + srv.repo, srvDir, {}, err => {
         channel.appendLine(err ? 'Downloading github.com/synerex/' + srv.repo + ' Error.' : 'Successfully Downloaded github.com/synerex/' + srv.repo + '.');
         vscode.tasks.executeTask(new vscode.Task(
@@ -31,7 +31,7 @@ function installSrv (context, channel, taskList, srv) {
             'Synerex Client',
             new vscode.ShellExecution(isWin ? ".\\build.bat" : "make", { cwd: srvDir })
         )).then( te => {
-            statusBar.setStatus({ attr: srv.attr, status: 'loading', list: taskList });
+            statusBar.setStatus({ label: srv.label, status: 'loading', list: taskList });
             channel.appendLine('Installing ' + srv.name + '...');
         }, err => {
             channel.appendLine('Installing ' + srv.name + ' Failed.');

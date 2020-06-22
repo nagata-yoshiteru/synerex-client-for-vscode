@@ -1,8 +1,8 @@
 const vscode = require('vscode');
 
-function setStatus({attr, status, list}){
+function setStatus({label, status, list}){
     list.forEach( v => {
-        if (v.attr === attr) v.status = status;
+        if (v.label === label) v.status = status;
     });
     showStatus(list);
 }

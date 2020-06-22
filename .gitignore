@@ -8,3 +8,4 @@ sxprofile.json
 yarn-error.log
 dist/
 provider_proxy/
+provider_harmovis_layers/

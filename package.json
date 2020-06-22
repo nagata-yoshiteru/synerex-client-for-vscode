@@ -7,7 +7,7 @@
 		"type": "git",
 		"url": "https://github.com/nagata-yoshiteru/synerex-client-for-vscode"
 	},
-	"version": "0.1.3",
+	"version": "0.2.0",
 	"engines": {
 		"vscode": "^1.45.0"
 	},
@@ -36,6 +36,10 @@
 			{
 				"command": "synerexClient.startProxyPrv",
 				"title": "Start Proxy Provider - Synerex Client"
+			},
+			{
+				"command": "synerexClient.startHVLPrv",
+				"title": "Start Harmoware-VIS Layers Provider - Synerex Client"
 			}
 		],
 		"configuration": {
@@ -70,6 +74,14 @@
 					"default": null,
 					"description": "Specifies the path to Proxy Provider. If not specified, extension will install it automatically."
 				},
+				"synerexClient.harmovisLayersProvider": {
+					"type": [
+						"string",
+						"null"
+					],
+					"default": null,
+					"description": "Specifies the path to Harmoware-VIS Layers Provider. If not specified, extension will install it automatically."
+				},
 				"synerexClient.synerexServerEnabled": {
 					"type": "boolean",
 					"default": true,
@@ -84,6 +96,11 @@
 					"type": "boolean",
 					"default": false,
 					"description": "Whether to use Proxy Provider."
+				},
+				"synerexClient.harmovisLayersProviderEnabled": {
+					"type": "boolean",
+					"default": false,
+					"description": "Whether to use Harmoware-VIS Layers Provider."
 				}
 			}
 		},
@@ -93,6 +110,12 @@
 			},
 			{
 				"type": "synerexClient.nodeServer"
+			},
+			{
+				"type": "synerexClient.proxyProvider"
+			},
+			{
+				"type": "synerexClient.harmovisLayersProvider"
 			}
 		]
 	},

@@ -14,6 +14,7 @@ Currently, following Synerex Servers / Providers are compatible.
 | Synerex Server | [synerex/synerex_server](https://github.com/synerex/synerex_server) | `synerexServer` | Yes |
 | Node Server | [synerex/synerex_nodeserv](https://github.com/synerex/synerex_nodeserv) | `nodeServer` | Yes |
 | Proxy Provider | [synerex/provider_proxy](https://github.com/synerex/provider_proxy) | `proxyProvider` | No |
+| Harmoware-VIS Layers Provider | [synerex/provider_harmovis_layers](https://github.com/synerex/provider_harmovis_layers) | `harmovisLayersProvider` | No |
 
 ## Requirements
 
@@ -43,10 +44,15 @@ Currently, no issues are found.
 
 ## Release Notes
 
+### 0.2.0
+
+- Add Harmoware-VIS Layers Provider Support
+
 ### 0.1.x
 
 - Add Proxy Provider Support
 - Add Enable / Disable Feature
+- Changed to background task
 
 ### 0.0.x
 

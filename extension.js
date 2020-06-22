@@ -12,7 +12,6 @@ const installer = require('./util/installer');
 
 const srvList = [
 	{
-		attr: 'Synerex',
 		name: 'Synerex Server',
 		label: 'SxSrv',
 		status: 'loading',
@@ -26,7 +25,6 @@ const srvList = [
 		port: 10000,
 	},
 	{
-		attr: 'Node',
 		name: 'Node Server',
 		label: 'NodeSrv',
 		status: 'loading',
@@ -40,7 +38,6 @@ const srvList = [
 		port: 9990,
 	},
 	{
-		attr: 'ProxyPrv',
 		name: 'Proxy Provider',
 		label: 'ProxyPrv',
 		status: 'loading',
@@ -52,6 +49,19 @@ const srvList = [
 		repo: 'provider_proxy',
 		binary: 'proxy',
 		port: 18000,
+	},
+	{
+		name: 'Harmoware-VIS Layers Provider',
+		label: 'HVLPrv',
+		status: 'loading',
+		item: null,
+		cmd: 'synerexClient.startHVLPrv',
+		stopping: false,
+		task: null,
+		type: 'synerexClient.harmovisLayersProvider',
+		repo: 'provider_harmovis_layers',
+		binary: 'harmovis-layers',
+		port: 10080,
 	},
 ];
 
@@ -89,7 +99,7 @@ function activate(context) {
 		srvList.forEach((v, i) => {
 			if (v.name === task.name) {
 				channel.appendLine('Stopped ' + task.name + '.');
-				statusBar.setStatus({ attr: v.attr, status: v.stopping ? 'debug-stop' : 'error', list: srvList });
+				statusBar.setStatus({ label: v.label, status: v.stopping ? 'debug-stop' : 'error', list: srvList });
 				v.stopping = false;
 			}
 			if ((v.name + ' Installation') === task.name) {
@@ -121,12 +131,12 @@ function startSynerexClient(context, channel) {
 }
 
 function startSrv(context, channel, srv) {
-	statusBar.setStatus({ attr: srv.attr, status: 'loading', list: srvList });
+	statusBar.setStatus({ label: srv.label, status: 'loading', list: srvList });
 	tcpscan.run({ host: 'localhost', port: srv.port }).then(
 		() => {
 			vscode.window.showWarningMessage(srv.name + ' seems to be already running.');
 			channel.appendLine(srv.name + ' seems to be already running.');
-			statusBar.setStatus({ attr: srv.attr, status: 'warning', list: srvList });
+			statusBar.setStatus({ label: srv.label, status: 'warning', list: srvList });
 		},
 		() => {
 			const srvPath = vscode.workspace.getConfiguration('synerexClient').get(srv.type.replace('synerexClient.',''));
@@ -134,7 +144,7 @@ function startSrv(context, channel, srv) {
 				if (installer.isSrvInstalled(context, srv)) {
 					runBackgroundTask(context, channel, srv, installer.getSrvPath(context, srv), installer.getSrvDir(context, srv));
 				} else {
-					statusBar.setStatus({ attr: srv.attr, status: 'info', list: srvList });
+					statusBar.setStatus({ label: srv.label, status: 'info', list: srvList });
 					installer.installSrv(context, channel, srvList, srv);
 				}
 			} else {
@@ -163,12 +173,12 @@ function runBackgroundTask(context, channel, srv, binaryPath, binaryDir) {
 		task => {
 			srv.task = task;
 			channel.appendLine('Started ' + srv.name + '.');
-			statusBar.setStatus({ attr: srv.attr, status: 'debug-start', list: srvList });
+			statusBar.setStatus({ label: srv.label, status: 'debug-start', list: srvList });
 		},
 		err => {
 			channel.appendLine('Cannot start ' + srv.name + '.');
 			console.error(err);
-			statusBar.setStatus({ attr: srv.attr, status: 'debug-stop', list: srvList });
+			statusBar.setStatus({ label: srv.label, status: 'debug-stop', list: srvList });
 		}
 	);
 }
