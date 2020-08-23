@@ -37,6 +37,10 @@ Following options are available for Compatible Synerex Servers / Providers.
 * `synerexClient.[sp-id]`: Specifies the path to the Server / Provider correspond to `sp-id`. If not specified, extension will install it automatically.
 * `synerexClient.[sp-id]Enabled` : Whether to use the Server / Provider correspond to `sp-id`. Default value is shown in the Compatible Synerex Servers / Providers table above. **Please restart VSCode window after update this option.**
 
+### Updating Server
+
+Press `Ctrl` + `Shift` + `P` to open Command Palette, type `update server` and select `Update Server - Synerex Client`.
+Then, select the server you want to update.
 
 ## Known Issues
 
@@ -44,7 +48,11 @@ Currently, no issues are found.
 
 ## Release Notes
 
-### 0.2.0
+### 0.3.0
+
+- Add Server Updater
+
+### 0.2.x
 
 - Add Harmoware-VIS Layers Provider Support
 

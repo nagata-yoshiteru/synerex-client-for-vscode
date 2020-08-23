@@ -1,5 +1,13 @@
 # Change Log
 
+### 0.3.0
+
+- Add Server Updater
+
+### 0.2.1
+
+- Bug fix
+
 ### 0.2.0
 
 - Add Harmoware-VIS Layers Provider Support
