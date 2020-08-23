@@ -18,6 +18,7 @@ const srvList = [
 		item: null,
 		cmd: 'synerexClient.startSynerex',
 		stopping: false,
+		updating: false,
 		task: null,
 		type: 'synerexClient.synerexServer',
 		repo: 'synerex_server',
@@ -31,6 +32,7 @@ const srvList = [
 		item: null,
 		cmd: 'synerexClient.startNode',
 		stopping: false,
+		updating: false,
 		task: null,
 		type: 'synerexClient.nodeServer',
 		repo: 'synerex_nodeserv',
@@ -44,6 +46,7 @@ const srvList = [
 		item: null,
 		cmd: 'synerexClient.startProxyPrv',
 		stopping: false,
+		updating: false,
 		task: null,
 		type: 'synerexClient.proxyProvider',
 		repo: 'provider_proxy',
@@ -57,6 +60,7 @@ const srvList = [
 		item: null,
 		cmd: 'synerexClient.startHVLPrv',
 		stopping: false,
+		updating: false,
 		task: null,
 		type: 'synerexClient.harmovisLayersProvider',
 		repo: 'provider_harmovis_layers',
@@ -83,6 +87,11 @@ function activate(context) {
 		startSynerexClient(context, channel);
 	});
 
+	let updateServerCommand = vscode.commands.registerCommand('synerexClient.update', () => {
+		// The code you place here will be executed every time your command is executed
+		updateServerStart(context, channel);
+	});
+
 	srvList.forEach((srv, i) => {
 		srv.enabled = vscode.workspace.getConfiguration('synerexClient').get(srv.type.replace('synerexClient.','') + 'Enabled');
 		if (srv.enabled) {
@@ -101,6 +110,9 @@ function activate(context) {
 				channel.appendLine('Stopped ' + task.name + '.');
 				statusBar.setStatus({ label: v.label, status: v.stopping ? 'debug-stop' : 'error', list: srvList });
 				v.stopping = false;
+				if (v.updating) {
+					setTimeout(() => updateServerContinue(context, channel, v), 1000);
+				}
 			}
 			if ((v.name + ' Installation') === task.name) {
 				channel.appendLine('Installed ' + v.name + '.');
@@ -115,6 +127,7 @@ function activate(context) {
 	console.log('synerexClient.launchOnWindowOpen: ', launchOnWindowOpen);
 
 	context.subscriptions.push(startClientCommand);
+	context.subscriptions.push(updateServerCommand);
 
 	if (launchOnWindowOpen) startSynerexClient(context, channel);
 }
@@ -128,6 +141,31 @@ function deactivate() {
 function startSynerexClient(context, channel) {
 	vscode.window.showInformationMessage('Started Synerex Client!');
 	srvList.forEach(srv => srv.enabled ? startSrv(context, channel, srv) : {});
+}
+
+function updateServerStart(context, channel) {
+	const selections = srvList.map(srv => srv.name);
+	vscode.window
+		.showQuickPick(selections)
+		.then(srvName => {
+			const srv = findSrvByName(srvName);
+			vscode.window.showInformationMessage("Updating " + srv.name + " ...");
+			srv.updating = true;
+			if (srv.task) {
+				srv.task.terminate();
+				srv.task = null;
+				srv.stopping = true;
+			} else {
+				updateServerContinue(context, channel, srv);
+			}
+		});
+}
+
+function updateServerContinue(context, channel, srv) {
+	const srvDir = installer.getSrvDir(context, srv);
+	vscode.workspace.fs.delete(vscode.Uri.file(srvDir), { recursive: true }).then(() => {
+		installer.installSrv(context, channel, srvList, srv);
+	}, () => { vscode.window.showErrorMessage("Failed to stop " + srv.name + ".") });
 }
 
 function startSrv(context, channel, srv) {
@@ -187,6 +225,13 @@ function stopTask(no) {
 	if (srvList[no].task) srvList[no].task.terminate();
 	srvList[no].task = null;
 	srvList[no].stopping = true;
+}
+
+function findSrvByName(srvName) {
+	for (let i = 0; i < srvList.length; i++) {
+		if (srvList[i].name === srvName) return srvList[i];
+	}
+	return null;
 }
 
 module.exports = {
