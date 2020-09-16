@@ -5,69 +5,11 @@ const path = require('path');
 const tcpscan = require('simple-tcpscan');
 const statusBar = require('./util/statusBar');
 const installer = require('./util/installer');
-
+const { srvList } = require('./const');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 
-const srvList = [
-	{
-		name: 'Synerex Server',
-		label: 'SxSrv',
-		status: 'loading',
-		item: null,
-		cmd: 'synerexClient.startSynerex',
-		stopping: false,
-		updating: false,
-		task: null,
-		type: 'synerexClient.synerexServer',
-		repo: 'synerex_server',
-		binary: 'synerex-server',
-		port: 10000,
-	},
-	{
-		name: 'Node Server',
-		label: 'NodeSrv',
-		status: 'loading',
-		item: null,
-		cmd: 'synerexClient.startNode',
-		stopping: false,
-		updating: false,
-		task: null,
-		type: 'synerexClient.nodeServer',
-		repo: 'synerex_nodeserv',
-		binary: 'nodeserv',
-		port: 9990,
-	},
-	{
-		name: 'Proxy Provider',
-		label: 'ProxyPrv',
-		status: 'loading',
-		item: null,
-		cmd: 'synerexClient.startProxyPrv',
-		stopping: false,
-		updating: false,
-		task: null,
-		type: 'synerexClient.proxyProvider',
-		repo: 'provider_proxy',
-		binary: 'proxy',
-		port: 18000,
-	},
-	{
-		name: 'Harmoware-VIS Layers Provider',
-		label: 'HVLPrv',
-		status: 'loading',
-		item: null,
-		cmd: 'synerexClient.startHVLPrv',
-		stopping: false,
-		updating: false,
-		task: null,
-		type: 'synerexClient.harmovisLayersProvider',
-		repo: 'provider_harmovis_layers',
-		binary: 'harmovis-layers',
-		port: 10080,
-	},
-];
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -77,6 +19,11 @@ function activate(context) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "synerex-client-for-vscode" is now active!');
+	if (!vscode.workspace.getConfiguration('synerexClient').get('enableClient')) {
+		console.log('Not enabled, exiting...');
+		return;
+	}
+	vscode.window.showInformationMessage('Launching Synerex Client...');
 	const channel = vscode.window.createOutputChannel("Synerex Client");
 
 	// The command has been defined in the package.json file
@@ -123,13 +70,14 @@ function activate(context) {
 
 	channel.appendLine('Loaded Synerex Client for VSCode.');
 
-	const launchOnWindowOpen = vscode.workspace.getConfiguration('synerexClient').get('launchOnWindowOpen');
-	console.log('synerexClient.launchOnWindowOpen: ', launchOnWindowOpen);
+	const enableAutoStart = vscode.workspace.getConfiguration('synerexClient').get('enableAutoStart');
+	console.log('synerexClient.enableAutoStart: ', enableAutoStart);
 
 	context.subscriptions.push(startClientCommand);
 	context.subscriptions.push(updateServerCommand);
 
-	if (launchOnWindowOpen) startSynerexClient(context, channel);
+	if (enableAutoStart) startSynerexClient(context, channel);
+	statusBar.showStatus(srvList);
 }
 exports.activate = activate;
 
@@ -139,7 +87,6 @@ function deactivate() {
 }
 
 function startSynerexClient(context, channel) {
-	vscode.window.showInformationMessage('Started Synerex Client!');
 	srvList.forEach(srv => srv.enabled ? startSrv(context, channel, srv) : {});
 }
 

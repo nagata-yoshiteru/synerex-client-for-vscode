@@ -16,7 +16,7 @@
 	],
 	"activationEvents": [
 		"onCommand:synerexClient.start",
-		"workspaceContains:**/.synerex"
+		"onStartupFinished"
 	],
 	"main": "./dist/extension",
 	"contributes": {
@@ -49,60 +49,75 @@
 		"configuration": {
 			"title": "Synerex Client",
 			"properties": {
-				"synerexClient.launchOnWindowOpen": {
+				"synerexClient.enableClient": {
 					"type": "boolean",
+					"scope": "window",
 					"default": false,
-					"description": "If enabled, launch Synerex Server and Node Server when a VSCode workspace which contains `.synerex` file opend."
+					"description": "If enabled, launch this extension after VSCode started."
+				},
+				"synerexClient.enableAutoStart": {
+					"type": "boolean",
+					"scope": "window",
+					"default": false,
+					"description": "If enabled, launch Synerex Servers and Providers after VSCode started."
 				},
 				"synerexClient.synerexServer": {
 					"type": [
 						"string",
 						"null"
 					],
+					"scope": "window",
 					"default": null,
-					"description": "Specifies the path to Synerex Server. If not specified, extension will install it automatically."
+					"description": "Specifies the path to Synerex Server. If not specified, extension will install it automatically from GitHub source."
 				},
 				"synerexClient.nodeServer": {
 					"type": [
 						"string",
 						"null"
 					],
+					"scope": "window",
 					"default": null,
-					"description": "Specifies the path to Node Server. If not specified, extension will install it automatically."
+					"description": "Specifies the path to Node Server. If not specified, extension will install it automatically from GitHub source."
 				},
 				"synerexClient.proxyProvider": {
 					"type": [
 						"string",
 						"null"
 					],
+					"scope": "window",
 					"default": null,
-					"description": "Specifies the path to Proxy Provider. If not specified, extension will install it automatically."
+					"description": "Specifies the path to Proxy Provider. If not specified, extension will install it automatically from GitHub source."
 				},
 				"synerexClient.harmovisLayersProvider": {
 					"type": [
 						"string",
 						"null"
 					],
+					"scope": "window",
 					"default": null,
-					"description": "Specifies the path to Harmoware-VIS Layers Provider. If not specified, extension will install it automatically."
+					"description": "Specifies the path to Harmoware-VIS Layers Provider. If not specified, extension will install it automatically from GitHub source."
 				},
 				"synerexClient.synerexServerEnabled": {
 					"type": "boolean",
+					"scope": "window",
 					"default": true,
 					"description": "Whether to use Synerex Server."
 				},
 				"synerexClient.nodeServerEnabled": {
 					"type": "boolean",
+					"scope": "window",
 					"default": true,
 					"description": "Whether to use Node Server."
 				},
 				"synerexClient.proxyProviderEnabled": {
 					"type": "boolean",
+					"scope": "window",
 					"default": false,
 					"description": "Whether to use Proxy Provider."
 				},
 				"synerexClient.harmovisLayersProviderEnabled": {
 					"type": "boolean",
+					"scope": "window",
 					"default": false,
 					"description": "Whether to use Harmoware-VIS Layers Provider."
 				}
