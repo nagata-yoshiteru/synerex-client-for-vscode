@@ -20,5 +20,5 @@ function showStatus(list) {
 
 module.exports = {
 	setStatus,
-	// showStatus,
+	showStatus,
 }
