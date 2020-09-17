@@ -26,6 +26,10 @@
 				"title": "Start Synerex Client"
 			},
 			{
+				"command": "synerexClient.stop",
+				"title": "Stop Synerex Client"
+			},
+			{
 				"command": "synerexClient.update",
 				"title": "Update Server - Synerex Client"
 			},

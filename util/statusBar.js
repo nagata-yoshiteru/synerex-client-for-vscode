@@ -20,8 +20,11 @@ function showStatus(list) {
 
 function clearStatus(list) {
     list.forEach( v => {
-        if (v.item) v.item.dispose();
         v.status = 'debug-stop';
+        if (v.item) {
+            v.item.hide();
+            v.item.dispose();
+        }
     });
 }
 
