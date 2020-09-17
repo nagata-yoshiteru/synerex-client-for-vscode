@@ -65,6 +65,11 @@ Currently, no issues are found.
 
 ## Release Notes
 
+### 0.4.1
+
+- Bug Fix about configuration
+- Update dependencies
+
 ### 0.4.0
 
 - Update Startup behavior
