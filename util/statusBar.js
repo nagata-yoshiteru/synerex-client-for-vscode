@@ -18,7 +18,15 @@ function showStatus(list) {
     });
 }
 
+function clearStatus(list) {
+    list.forEach( v => {
+        if (v.item) v.item.dispose();
+        v.status = 'debug-stop';
+    });
+}
+
 module.exports = {
 	setStatus,
-	showStatus,
+    showStatus,
+    clearStatus,
 }

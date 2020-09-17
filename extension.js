@@ -19,25 +19,14 @@ function activate(context) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "synerex-client-for-vscode" is now active!');
-	if (!vscode.workspace.getConfiguration('synerexClient').get('enableClient')) {
-		console.log('Not enabled, exiting...');
-		return;
-	}
-	vscode.window.showInformationMessage('Launching Synerex Client...');
 	const channel = vscode.window.createOutputChannel("Synerex Client");
+	const enableClient = vscode.workspace.getConfiguration('synerexClient').get('enableClient');
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with  registerCommand
 	// The commandId parameter must match the command field in package.json
-	let startClientCommand = vscode.commands.registerCommand('synerexClient.start', () => {
-		// The code you place here will be executed every time your command is executed
-		startSynerexClient(context, channel);
-	});
-
-	let updateServerCommand = vscode.commands.registerCommand('synerexClient.update', () => {
-		// The code you place here will be executed every time your command is executed
-		updateServerStart(context, channel);
-	});
+	let startClientCommand = vscode.commands.registerCommand('synerexClient.start', () => startSynerexClient(context, channel));
+	let updateServerCommand = vscode.commands.registerCommand('synerexClient.update', () => updateServerStart(context, channel));
 
 	srvList.forEach((srv, i) => {
 		srv.enabled = vscode.workspace.getConfiguration('synerexClient').get(srv.type.replace('synerexClient.','') + 'Enabled');
@@ -68,6 +57,19 @@ function activate(context) {
 		});
 	});
 
+	vscode.workspace.onDidChangeConfiguration(e => {
+		if (e.affectsConfiguration('synerexClient.enableClient')) {
+			const enableClient = vscode.workspace.getConfiguration('synerexClient').get('enableClient');
+			if (enableClient) startSynerexClient(context, channel);
+			else deactivate();
+		}
+		srvList.forEach((srv, i) => {
+			srv.enabled = vscode.workspace.getConfiguration('synerexClient').get(srv.type.replace('synerexClient.','') + 'Enabled');
+			if (!srv.enabled) stopTask(i);
+		});
+		statusBar.showStatus(srvList);
+	})
+
 	channel.appendLine('Loaded Synerex Client for VSCode.');
 
 	const enableAutoStart = vscode.workspace.getConfiguration('synerexClient').get('enableAutoStart');
@@ -76,18 +78,21 @@ function activate(context) {
 	context.subscriptions.push(startClientCommand);
 	context.subscriptions.push(updateServerCommand);
 
-	if (enableAutoStart) startSynerexClient(context, channel);
-	statusBar.showStatus(srvList);
+	if (enableClient) startSynerexClient(context, channel);
 }
 exports.activate = activate;
 
 // this method is called when your extension is deactivated
 function deactivate() {
 	srvList.forEach((_, i) => stopTask(i));
+	statusBar.clearStatus(srvList);
 }
 
 function startSynerexClient(context, channel) {
-	srvList.forEach(srv => srv.enabled ? startSrv(context, channel, srv) : {});
+	statusBar.showStatus(srvList);
+	vscode.window.showInformationMessage('Launched Synerex Client!');
+	const enableAutoStart = vscode.workspace.getConfiguration('synerexClient').get('enableAutoStart');
+	if (enableAutoStart) srvList.forEach(srv => srv.enabled ? startSrv(context, channel, srv) : {});
 }
 
 function updateServerStart(context, channel) {
