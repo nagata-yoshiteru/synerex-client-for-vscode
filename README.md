@@ -67,6 +67,10 @@ Currently, no issues are found.
 
 ## Release Notes
 
+### 0.5.1
+
+- Rename Update Server to Reinstall Server / Provider
+
 ### 0.5.0
 
 - Update Configuration Path
