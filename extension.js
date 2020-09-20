@@ -5,7 +5,7 @@ const path = require('path');
 const tcpscan = require('simple-tcpscan');
 const statusBar = require('./util/statusBar');
 const installer = require('./util/installer');
-const { srvList } = require('./const');
+const { sxClient, srvList } = require('./const');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -20,17 +20,18 @@ function activate(context) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "synerex-client-for-vscode" is now active!');
 	const channel = vscode.window.createOutputChannel("Synerex Client");
-	const enableClient = vscode.workspace.getConfiguration('synerexClient').get('enableClient');
+	const enableClient = vscode.workspace.getConfiguration(sxClient).get('enableClient');
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with  registerCommand
 	// The commandId parameter must match the command field in package.json
-	let startClientCommand = vscode.commands.registerCommand('synerexClient.start', () => startSynerexClient(context, channel));
-	let stopClientCommand = vscode.commands.registerCommand('synerexClient.stop', () => deactivate());
-	let updateServerCommand = vscode.commands.registerCommand('synerexClient.update', () => updateServerStart(context, channel));
+	let startClientCommand = vscode.commands.registerCommand(`${sxClient}.start`, () => startSynerexClient(context, channel));
+	let stopClientCommand = vscode.commands.registerCommand(`${sxClient}.stop`, () => deactivate());
+	let updateServerCommand = vscode.commands.registerCommand(`${sxClient}.update`, () => updateServerStart(context, channel));
 
 	srvList.forEach((srv, i) => {
-		srv.enabled = vscode.workspace.getConfiguration('synerexClient').get(srv.type.replace('synerexClient.','') + 'Enabled');
+		srv.enabled = vscode.workspace.getConfiguration(sxClient).get(`${srv.type}.enabled`);
+		srv.enableAutoStart = vscode.workspace.getConfiguration(sxClient).get(`${srv.type}.enableAutoStart`);
 		vscode.commands.registerCommand(srv.cmd, () => {
 			startSrv(context, channel, srv);
 		});
@@ -58,12 +59,14 @@ function activate(context) {
 
 	vscode.workspace.onDidChangeConfiguration(e => {
 		srvList.forEach((srv, i) => {
-			srv.enabled = vscode.workspace.getConfiguration('synerexClient').get(srv.type.replace('synerexClient.','') + 'Enabled');
+			srv.enabled = vscode.workspace.getConfiguration(sxClient).get(`${srv.type}.enabled`);
+			srv.enableAutoStart = vscode.workspace.getConfiguration(sxClient).get(`${srv.type}.enableAutoStart`);
 			if (!srv.enabled) stopTask(i);
+			if (e.affectsConfiguration(`${sxClient}.${srv.type}.enabled`) && srv.enableAutoStart) startSrv(context, channel, srv);
 		});
 		statusBar.showStatus(srvList);
-		if (e.affectsConfiguration('synerexClient.enableClient')) {
-			const enableClient = vscode.workspace.getConfiguration('synerexClient').get('enableClient');
+		if (e.affectsConfiguration(`${sxClient}.enableClient`)) {
+			const enableClient = vscode.workspace.getConfiguration(sxClient).get('enableClient');
 			if (enableClient) startSynerexClient(context, channel);
 			else deactivate();
 		}
@@ -71,8 +74,8 @@ function activate(context) {
 
 	channel.appendLine('Loaded Synerex Client for VSCode.');
 
-	const enableAutoStart = vscode.workspace.getConfiguration('synerexClient').get('enableAutoStart');
-	console.log('synerexClient.enableAutoStart: ', enableAutoStart);
+	const enableAutoStart = vscode.workspace.getConfiguration(sxClient).get('enableAutoStart');
+	console.log(`${sxClient}.enableAutoStart: `, enableAutoStart);
 
 	context.subscriptions.push(startClientCommand);
 	context.subscriptions.push(stopClientCommand);
@@ -94,8 +97,8 @@ function startSynerexClient(context, channel) {
 	deactivating = false;
 	statusBar.showStatus(srvList);
 	vscode.window.showInformationMessage('Launched Synerex Client!');
-	const enableAutoStart = vscode.workspace.getConfiguration('synerexClient').get('enableAutoStart');
-	if (enableAutoStart) srvList.forEach(srv => srv.enabled && (!srv.task) ? startSrv(context, channel, srv) : {});
+	const enableAutoStart = vscode.workspace.getConfiguration(sxClient).get('enableAutoStart');
+	if (enableAutoStart) srvList.forEach(srv => srv.enabled && srv.enableAutoStart && (!srv.task) ? startSrv(context, channel, srv) : {});
 }
 
 function updateServerStart(context, channel) {
@@ -132,7 +135,7 @@ function startSrv(context, channel, srv) {
 			statusBar.setStatus({ label: srv.label, status: 'warning', list: srvList });
 		},
 		() => {
-			const srvPath = vscode.workspace.getConfiguration('synerexClient').get(srv.type.replace('synerexClient.',''));
+			const srvPath = vscode.workspace.getConfiguration(sxClient).get(`${srv.type}.path`);
 			if (!srvPath || srvPath === '') {
 				if (installer.isSrvInstalled(context, srv)) {
 					runBackgroundTask(context, channel, srv, installer.getSrvPath(context, srv), installer.getSrvDir(context, srv));
@@ -149,7 +152,7 @@ function startSrv(context, channel, srv) {
 
 function runBackgroundTask(context, channel, srv, binaryPath, binaryDir) {
 	const newTask = new vscode.Task(
-		{ type: srv.type },
+		{ type: `${sxClient}.${srv.type}` },
 		vscode.TaskScope.Workspace,
 		srv.name,
 		'Synerex Client',

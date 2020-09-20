@@ -1,14 +1,16 @@
+const sxClient = 'synerexClient';
+
 const srvList = [
 	{
 		name: 'Synerex Server',
 		label: 'SxSrv',
 		status: 'debug-stop',
 		item: null,
-		cmd: 'synerexClient.startSynerex',
+		cmd: `${sxClient}.startSynerex`,
 		stopping: false,
 		updating: false,
 		task: null,
-		type: 'synerexClient.synerexServer',
+		type: 'synerexServer',
 		repo: 'synerex_server',
 		binary: 'synerex-server',
 		port: 10000,
@@ -18,11 +20,11 @@ const srvList = [
 		label: 'NodeSrv',
 		status: 'debug-stop',
 		item: null,
-		cmd: 'synerexClient.startNode',
+		cmd: `${sxClient}.startNode`,
 		stopping: false,
 		updating: false,
 		task: null,
-		type: 'synerexClient.nodeServer',
+		type: 'nodeServer',
 		repo: 'synerex_nodeserv',
 		binary: 'nodeserv',
 		port: 9990,
@@ -32,11 +34,11 @@ const srvList = [
 		label: 'ProxyPrv',
 		status: 'debug-stop',
 		item: null,
-		cmd: 'synerexClient.startProxyPrv',
+		cmd: `${sxClient}.startProxyPrv`,
 		stopping: false,
 		updating: false,
 		task: null,
-		type: 'synerexClient.proxyProvider',
+		type: 'proxyProvider',
 		repo: 'provider_proxy',
 		binary: 'proxy',
 		port: 18000,
@@ -46,11 +48,11 @@ const srvList = [
 		label: 'HVLPrv',
 		status: 'debug-stop',
 		item: null,
-		cmd: 'synerexClient.startHVLPrv',
+		cmd: `${sxClient}.startHVLPrv`,
 		stopping: false,
 		updating: false,
 		task: null,
-		type: 'synerexClient.harmovisLayersProvider',
+		type: 'harmovisLayersProvider',
 		repo: 'provider_harmovis_layers',
 		binary: 'harmovis-layers',
 		port: 10080,
@@ -58,5 +60,6 @@ const srvList = [
 ];
 
 module.exports = {
+	sxClient,
     srvList,
 }

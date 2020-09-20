@@ -65,7 +65,7 @@
 					"default": false,
 					"description": "If enabled, launch Synerex Servers and Providers after VSCode started."
 				},
-				"synerexClient.synerexServer": {
+				"synerexClient.synerexServer.path": {
 					"type": [
 						"string",
 						"null"
@@ -74,7 +74,7 @@
 					"default": null,
 					"description": "Specifies the path to Synerex Server. If not specified, extension will install it automatically from GitHub source."
 				},
-				"synerexClient.nodeServer": {
+				"synerexClient.nodeServer.path": {
 					"type": [
 						"string",
 						"null"
@@ -83,7 +83,7 @@
 					"default": null,
 					"description": "Specifies the path to Node Server. If not specified, extension will install it automatically from GitHub source."
 				},
-				"synerexClient.proxyProvider": {
+				"synerexClient.proxyProvider.path": {
 					"type": [
 						"string",
 						"null"
@@ -92,7 +92,7 @@
 					"default": null,
 					"description": "Specifies the path to Proxy Provider. If not specified, extension will install it automatically from GitHub source."
 				},
-				"synerexClient.harmovisLayersProvider": {
+				"synerexClient.harmovisLayersProvider.path": {
 					"type": [
 						"string",
 						"null"
@@ -101,29 +101,53 @@
 					"default": null,
 					"description": "Specifies the path to Harmoware-VIS Layers Provider. If not specified, extension will install it automatically from GitHub source."
 				},
-				"synerexClient.synerexServerEnabled": {
+				"synerexClient.synerexServer.enabled": {
 					"type": "boolean",
 					"scope": "window",
 					"default": true,
 					"description": "Whether to use Synerex Server."
 				},
-				"synerexClient.nodeServerEnabled": {
+				"synerexClient.nodeServer.enabled": {
 					"type": "boolean",
 					"scope": "window",
 					"default": true,
 					"description": "Whether to use Node Server."
 				},
-				"synerexClient.proxyProviderEnabled": {
+				"synerexClient.proxyProvider.enabled": {
 					"type": "boolean",
 					"scope": "window",
 					"default": false,
 					"description": "Whether to use Proxy Provider."
 				},
-				"synerexClient.harmovisLayersProviderEnabled": {
+				"synerexClient.harmovisLayersProvider.enabled": {
 					"type": "boolean",
 					"scope": "window",
 					"default": false,
 					"description": "Whether to use Harmoware-VIS Layers Provider."
+				},
+				"synerexClient.synerexServer.enableAutoStart": {
+					"type": "boolean",
+					"scope": "window",
+					"default": true,
+					"description": "Whether to launch Synerex Server automatically."
+				},
+				"synerexClient.nodeServer.enableAutoStart": {
+					"type": "boolean",
+					"scope": "window",
+					"default": true,
+					"description": "Whether to launch Node Server automatically."
+				},
+				"synerexClient.proxyProvider.enableAutoStart": {
+					"type": "boolean",
+					"scope": "window",
+					"default": false,
+					"description": "Whether to launch Proxy Provider automatically."
+				},
+				"synerexClient.harmovisLayersProvider.enableAutoStart": {
+					"type": "boolean",
+					"scope": "window",
+					"default": false,
+					"description": "Whether to launch Harmoware-VIS Layers Provider automatically."
 				}
 			}
 		},
