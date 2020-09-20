@@ -27,7 +27,7 @@ function activate(context) {
 	// The commandId parameter must match the command field in package.json
 	let startClientCommand = vscode.commands.registerCommand(`${sxClient}.start`, () => startSynerexClient(context, channel));
 	let stopClientCommand = vscode.commands.registerCommand(`${sxClient}.stop`, () => deactivate());
-	let updateServerCommand = vscode.commands.registerCommand(`${sxClient}.update`, () => updateServerStart(context, channel));
+	let reinstallServerCommand = vscode.commands.registerCommand(`${sxClient}.reinstall`, () => reinstallServerStart(context, channel));
 
 	srvList.forEach((srv, i) => {
 		srv.enabled = vscode.workspace.getConfiguration(sxClient).get(`${srv.type}.enabled`);
@@ -46,8 +46,8 @@ function activate(context) {
 				channel.appendLine('Stopped ' + task.name + '.');
 				if (!deactivating) statusBar.setStatus({ label: v.label, status: v.stopping ? 'debug-stop' : 'error', list: srvList });
 				v.stopping = false;
-				if (v.updating) {
-					setTimeout(() => updateServerContinue(context, channel, v), 1000);
+				if (v.reinstalling) {
+					setTimeout(() => reinstallServerContinue(context, channel, v), 1000);
 				}
 			}
 			if ((v.name + ' Installation') === task.name) {
@@ -79,7 +79,7 @@ function activate(context) {
 
 	context.subscriptions.push(startClientCommand);
 	context.subscriptions.push(stopClientCommand);
-	context.subscriptions.push(updateServerCommand);
+	context.subscriptions.push(reinstallServerCommand);
 
 	if (enableClient) startSynerexClient(context, channel);
 }
@@ -101,25 +101,26 @@ function startSynerexClient(context, channel) {
 	if (enableAutoStart) srvList.forEach(srv => srv.enabled && srv.enableAutoStart && (!srv.task) ? startSrv(context, channel, srv) : {});
 }
 
-function updateServerStart(context, channel) {
-	const selections = srvList.map(srv => srv.name);
+function reinstallServerStart(context, channel) {
+	const selections = [];
+	srvList.forEach(srv => vscode.workspace.getConfiguration(sxClient).get(`${srv.type}.path`) === "" && selections.push(srv.name));
 	vscode.window
 		.showQuickPick(selections)
 		.then(srvName => {
 			const srv = findSrvByName(srvName);
-			vscode.window.showInformationMessage("Updating " + srv.name + " ...");
-			srv.updating = true;
+			vscode.window.showInformationMessage("Reinstalling " + srv.name + " ...");
+			srv.reinstalling = true;
 			if (srv.task) {
 				srv.task.terminate();
 				srv.task = null;
 				srv.stopping = true;
 			} else {
-				updateServerContinue(context, channel, srv);
+				reinstallServerContinue(context, channel, srv);
 			}
 		});
 }
 
-function updateServerContinue(context, channel, srv) {
+function reinstallServerContinue(context, channel, srv) {
 	const srvDir = installer.getSrvDir(context, srv);
 	vscode.workspace.fs.delete(vscode.Uri.file(srvDir), { recursive: true }).then(() => {
 		installer.installSrv(context, channel, srvList, srv);

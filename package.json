@@ -30,8 +30,8 @@
 				"title": "Stop Synerex Client"
 			},
 			{
-				"command": "synerexClient.update",
-				"title": "Update Server - Synerex Client"
+				"command": "synerexClient.reinstall",
+				"title": "Reinstall Server / Provider - Synerex Client"
 			},
 			{
 				"command": "synerexClient.startSynerex",

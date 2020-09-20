@@ -56,10 +56,10 @@ Following options are available for Compatible Synerex Servers / Providers.
 * `Server / Provider Name` Path (`synerexClient.[sp-id].path`): Specifies the path to the Server / Provider correspond to `sp-id`. If not specified, extension will install it automatically.
 * `Server / Provider Name` Version (`synerexClient.[sp-id].version`): Specifies the Server / Provider version to install. Can be specified with commit hash, tag or branch bame. If not specified, extension will install latest tag version. Default value is `master` ( master branch ) for all Synerex Servers / Providers. 
 
-### Updating Server
+### Reinstalling Server
 
-Press `Ctrl` + `Shift` + `P` to open Command Palette, type `update server` and select `Update Server - Synerex Client`.
-Then, select the server you want to update.
+Press `Ctrl` + `Shift` + `P` to open Command Palette, type `reinstall server` and select `Reinstall Server / Provider - Synerex Client`.
+Then, select the server you want to reinstall.
 
 ## Known Issues
 
