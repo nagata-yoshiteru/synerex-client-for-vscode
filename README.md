@@ -54,6 +54,7 @@ Following options are available for Compatible Synerex Servers / Providers.
 * `Server / Provider Name` Enabled (`synerexClient.[sp-id].enabled`) : Whether to use the Server / Provider correspond to `sp-id`. Default value is shown in the Compatible Synerex Servers / Providers table above. 
 * `Server / Provider Name` Enable Auto Start (`synerexClient.[sp-id].enableAutoStart`) : Whether to start the Server / Provider correspond to `sp-id` automatically. Default value is `true` for all Synerex Servers / Providers. 
 * `Server / Provider Name` Path (`synerexClient.[sp-id].path`): Specifies the path to the Server / Provider correspond to `sp-id`. If not specified, extension will install it automatically.
+* `Server / Provider Name` Version (`synerexClient.[sp-id].version`): Specifies the Server / Provider version to install. Can be specified with commit hash, tag or branch bame. If not specified, extension will install latest tag version. Default value is `master` ( master branch ) for all Synerex Servers / Providers. 
 
 ### Updating Server
 
@@ -66,14 +67,17 @@ Currently, no issues are found.
 
 ## Release Notes
 
-### 0.4.1
+### 0.5.0
 
-- Bug Fix about configuration
-- Update dependencies
+- Update Configuration Path
+- Add Auto Start option for individual Servers and Providers.
+- Add Version option for Servers and Providers.
 
-### 0.4.0
+### 0.4.x
 
 - Update Startup behavior
+- Bug Fix about configuration
+- Update dependencies
 
 ### 0.3.0
 
