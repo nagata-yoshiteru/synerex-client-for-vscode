@@ -136,6 +136,30 @@
 					"scope": "window",
 					"default": true,
 					"description": "Whether to launch Harmoware-VIS Layers Provider automatically."
+				},
+				"synerexClient.synerexServer.version": {
+					"type": "string",
+					"scope": "window",
+					"default": "master",
+					"description": "Which Synerex Server version to install. Specify with commit hash, tag or branch bame. If not specified, extension will install latest tag version."
+				},
+				"synerexClient.nodeServer.version": {
+					"type": "string",
+					"scope": "window",
+					"default": "master",
+					"description": "Which Node Server version to install. Specify with commit hash, tag or branch bame. If not specified, extension will install latest tag version."
+				},
+				"synerexClient.proxyProvider.version": {
+					"type": "string",
+					"scope": "window",
+					"default": "master",
+					"description": "Which Proxy Provider version to install. Specify with commit hash, tag or branch bame. If not specified, extension will install latest tag version."
+				},
+				"synerexClient.harmovisLayersProvider.version": {
+					"type": "string",
+					"scope": "window",
+					"default": "master",
+					"description": "Which Harmoware-VIS Layers Provider version to install. Specify with commit hash, tag or branch bame. If not specified, extension will install latest tag version."
 				}
 			}
 		},

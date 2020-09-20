@@ -4,6 +4,7 @@ const fs = require('fs');
 const clone = require('git-clone');
 const statusBar = require('./statusBar');
 const isWin = process.platform === 'win32';
+const { sxClient } = require('../const');
 
 const getSrvPath = (context, srv) => path.join(context.extensionPath, srv.repo, srv.binary + (isWin ? ".exe" : ""));
 const getSrvDir = (context, srv) => path.join(context.extensionPath, srv.repo);
@@ -24,12 +25,13 @@ function installSrv (context, channel, taskList, srv) {
     statusBar.setStatus({ label: srv.label, status: 'cloud-download', list: taskList });
     clone('https://github.com/synerex/' + srv.repo, srvDir, {}, err => {
         channel.appendLine(err ? 'Downloading github.com/synerex/' + srv.repo + ' Error.' : 'Successfully Downloaded github.com/synerex/' + srv.repo + '.');
+        const srvVersion = vscode.workspace.getConfiguration(sxClient).get(`${srv.type}.version`);
         vscode.tasks.executeTask(new vscode.Task(
             {type: 'install ' + srv.repo},
             vscode.TaskScope.Workspace,
             srv.name + ' Installation',
             'Synerex Client',
-            new vscode.ShellExecution(isWin ? ".\\build.bat" : "make", { cwd: srvDir })
+            new vscode.ShellExecution(`git checkout ${srvVersion === "" ? "$(git describe --tags --abbrev=0)" : srvVersion} ; ${isWin ? ".\\build.bat" : "make"}`, { cwd: srvDir })
         )).then(() => {
             statusBar.setStatus({ label: srv.label, status: 'loading', list: taskList });
             channel.appendLine('Installing ' + srv.name + '...');
