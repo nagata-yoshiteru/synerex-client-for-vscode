@@ -51,8 +51,9 @@ This extension contributes the following settings:
 Following options are available for Compatible Synerex Servers / Providers.
 
 
-* `Server / Provider Name` (`synerexClient.[sp-id]`): Specifies the path to the Server / Provider correspond to `sp-id`. If not specified, extension will install it automatically.
-* `Server / Provider Name`Enabled `synerexClient.[sp-id]Enabled` : Whether to use the Server / Provider correspond to `sp-id`. Default value is shown in the Compatible Synerex Servers / Providers table above. **Please restart VSCode window after update this option.**
+* `Server / Provider Name` Enabled (`synerexClient.[sp-id].enabled`) : Whether to use the Server / Provider correspond to `sp-id`. Default value is shown in the Compatible Synerex Servers / Providers table above. 
+* `Server / Provider Name` Enable Auto Start (`synerexClient.[sp-id].enableAutoStart`) : Whether to start the Server / Provider correspond to `sp-id` automatically. Default value is `true` for all Synerex Servers / Providers. 
+* `Server / Provider Name` Path (`synerexClient.[sp-id].path`): Specifies the path to the Server / Provider correspond to `sp-id`. If not specified, extension will install it automatically.
 
 ### Updating Server
 

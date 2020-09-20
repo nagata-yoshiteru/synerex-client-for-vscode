@@ -66,39 +66,27 @@
 					"description": "If enabled, launch Synerex Servers and Providers after VSCode started."
 				},
 				"synerexClient.synerexServer.path": {
-					"type": [
-						"string",
-						"null"
-					],
+					"type": "string",
 					"scope": "window",
-					"default": null,
+					"default": "",
 					"description": "Specifies the path to Synerex Server. If not specified, extension will install it automatically from GitHub source."
 				},
 				"synerexClient.nodeServer.path": {
-					"type": [
-						"string",
-						"null"
-					],
+					"type": "string",
 					"scope": "window",
-					"default": null,
+					"default": "",
 					"description": "Specifies the path to Node Server. If not specified, extension will install it automatically from GitHub source."
 				},
 				"synerexClient.proxyProvider.path": {
-					"type": [
-						"string",
-						"null"
-					],
+					"type": "string",
 					"scope": "window",
-					"default": null,
+					"default": "",
 					"description": "Specifies the path to Proxy Provider. If not specified, extension will install it automatically from GitHub source."
 				},
 				"synerexClient.harmovisLayersProvider.path": {
-					"type": [
-						"string",
-						"null"
-					],
+					"type": "string",
 					"scope": "window",
-					"default": null,
+					"default": "",
 					"description": "Specifies the path to Harmoware-VIS Layers Provider. If not specified, extension will install it automatically from GitHub source."
 				},
 				"synerexClient.synerexServer.enabled": {
@@ -140,13 +128,13 @@
 				"synerexClient.proxyProvider.enableAutoStart": {
 					"type": "boolean",
 					"scope": "window",
-					"default": false,
+					"default": true,
 					"description": "Whether to launch Proxy Provider automatically."
 				},
 				"synerexClient.harmovisLayersProvider.enableAutoStart": {
 					"type": "boolean",
 					"scope": "window",
-					"default": false,
+					"default": true,
 					"description": "Whether to launch Harmoware-VIS Layers Provider automatically."
 				}
 			}
