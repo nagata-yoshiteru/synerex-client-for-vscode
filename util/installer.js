@@ -6,8 +6,8 @@ const statusBar = require('./statusBar');
 const isWin = process.platform === 'win32';
 const { sxClient } = require('../const');
 
-const getSrvPath = (context, srv) => path.join(context.extensionPath, srv.repo, srv.binary + (isWin ? ".exe" : ""));
-const getSrvDir = (context, srv) => path.join(context.extensionPath, srv.repo);
+const getSrvPath = (context, srv) => path.join(context.storageUri.fsPath, srv.repo, srv.binary + (isWin ? ".exe" : ""));
+const getSrvDir = (context, srv) => path.join(context.storageUri.fsPath, srv.repo);
 
 function isSrvInstalled (context, srv) {
     const srvPath = getSrvPath(context, srv);
