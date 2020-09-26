@@ -1,5 +1,28 @@
 # Change Log
 
+### 0.6.0
+
+- Move Server / Provider Path to workspace storage
+
+### 0.5.1
+
+- Rename Update Server to Reinstall Server / Provider
+
+### 0.5.0
+
+- Update Configuration Path
+- Add Auto Start option for individual Servers and Providers.
+- Add Version option for Servers and Providers.
+
+### 0.4.1
+
+- Bug Fix about configuration
+- Update dependencies
+
+### 0.4.0
+
+- Update Startup behavior
+
 ### 0.3.0
 
 - Add Server Updater

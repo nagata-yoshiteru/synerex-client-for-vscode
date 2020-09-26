@@ -67,15 +67,16 @@ Currently, no issues are found.
 
 ## Release Notes
 
-### 0.5.1
+### 0.6.0
 
-- Rename Update Server to Reinstall Server / Provider
+- Move Server / Provider Path to workspace storage
 
-### 0.5.0
+### 0.5.x
 
 - Update Configuration Path
-- Add Auto Start option for individual Servers and Providers.
-- Add Version option for Servers and Providers.
+- Add Auto Start option for individual Servers and Providers
+- Add Version option for Servers and Providers
+- Rename Update Server to Reinstall Server / Provider
 
 ### 0.4.x
 
@@ -99,7 +100,7 @@ Currently, no issues are found.
 
 ### 0.0.x
 
-- Initial beta release of Synerex Client for Visual Studio Code.
+- Initial beta release of Synerex Client for Visual Studio Code
 
 
 
