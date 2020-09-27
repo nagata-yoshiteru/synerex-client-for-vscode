@@ -41,18 +41,22 @@ function activate(context) {
 	vscode.tasks.onDidEndTask(e => {
 		const { task } = e.execution;
 		console.log(task);
-		srvList.forEach((v, i) => {
-			if (v.name === task.name) {
+		srvList.forEach((srv, i) => {
+			if (srv.name === task.name) {
 				channel.appendLine('Stopped ' + task.name + '.');
-				if (!deactivating) statusBar.setStatus({ label: v.label, status: v.stopping ? 'debug-stop' : 'error', list: srvList });
-				v.stopping = false;
-				if (v.reinstalling) {
-					setTimeout(() => reinstallServerContinue(context, channel, v), 1000);
+				if (!deactivating) statusBar.setStatus({ label: srv.label, status: srv.stopping ? 'debug-stop' : 'error', list: srvList });
+				srv.stopping = false;
+				if (srv.reinstalling) {
+					setTimeout(() => reinstallServerContinue(context, channel, srv), 1000);
 				}
 			}
-			if ((v.name + ' Installation') === task.name) {
-				channel.appendLine('Installed ' + v.name + '.');
-				runBackgroundTask(context, channel, srvList[i], installer.getSrvPath(context, srvList[i]), installer.getSrvDir(context, srvList[i]));
+			if ((srv.name + ' Installation') === task.name) {
+				if (!installer.isSrvInstalled(context, srv)) {
+					installer.installSrvContinue(context, channel, srv);
+				} else {
+					channel.appendLine('Installed ' + srv.name + '.');
+					runBackgroundTask(context, channel, srvList[i], installer.getSrvPath(context, srvList[i]), installer.getSrvDir(context, srvList[i]));
+				}
 			}
 		});
 	});
@@ -139,7 +143,7 @@ function startSrv(context, channel, srv) {
 			const srvPath = vscode.workspace.getConfiguration(sxClient).get(`${srv.type}.path`);
 			if (!srvPath || srvPath === '') {
 				if (installer.isSrvInstalled(context, srv)) {
-					runBackgroundTask(context, channel, srv, installer.getSrvPath(context, srv), installer.getSrvDir(context, srv));
+					runBackgroundTask(context, channel, srv, installer.getSrvExec(srv), installer.getSrvDir(context, srv));
 				} else {
 					statusBar.setStatus({ label: srv.label, status: 'info', list: srvList });
 					installer.installSrv(context, channel, srvList, srv);
@@ -152,6 +156,7 @@ function startSrv(context, channel, srv) {
 }
 
 function runBackgroundTask(context, channel, srv, binaryPath, binaryDir) {
+	console.log(context.storageUri.fsPath);
 	const newTask = new vscode.Task(
 		{ type: `${sxClient}.${srv.type}` },
 		vscode.TaskScope.Workspace,
@@ -161,10 +166,10 @@ function runBackgroundTask(context, channel, srv, binaryPath, binaryDir) {
 	);
 	newTask.isBackground = true;
 	newTask.presentationOptions = {
-		clear: true,
+		// clear: true,
 		echo: false,
 		focus: false,
-		reveal: vscode.TaskRevealKind.Never,
+		// reveal: vscode.TaskRevealKind.Never,
 	}
 	vscode.tasks.executeTask(newTask).then(
 		task => {
