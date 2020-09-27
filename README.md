@@ -67,6 +67,12 @@ Currently, no issues are found.
 
 ## Release Notes
 
+### 0.6.1
+
+- Fixed Bug for cmd.exe environment
+- Improve Server / Provider execution behavior
+- Leave Server / Provider Task Window after stopped for Debug
+
 ### 0.6.0
 
 - Move Server / Provider Path to workspace storage
