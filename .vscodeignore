@@ -6,8 +6,6 @@ vsc-extension-quickstart.md
 **/jsconfig.json
 **/*.map
 **/.eslintrc.json
-synerex_server/
-synerex_nodeserv/
 nodeinfo.json
 sxprofile.json
 webpack.config.js
@@ -15,8 +13,7 @@ node_modules
 out/
 src/
 yarn-error.log
-provider_proxy/
-provider_harmovis_layers/
 .github/
 util/
 extension.js
+const.js
