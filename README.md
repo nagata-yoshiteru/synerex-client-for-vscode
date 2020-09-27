@@ -1,4 +1,4 @@
-# Synerex Client for Visual Studio Code
+# [Synerex Client for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ngtystr.synerex-client-for-vscode)
 
 ## Features
 
