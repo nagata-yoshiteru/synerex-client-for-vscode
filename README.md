@@ -67,6 +67,10 @@ Currently, no issues are found.
 
 ## Release Notes
 
+### 0.6.2
+
+- Fixed Bug for some environment
+
 ### 0.6.1
 
 - Fixed Bug for cmd.exe environment
