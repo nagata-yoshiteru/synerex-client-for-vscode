@@ -162,7 +162,7 @@ function runBackgroundTask(context, channel, srv, binaryPath, binaryDir) {
 		vscode.TaskScope.Workspace,
 		srv.name,
 		'Synerex Client',
-		new vscode.ShellExecution(binaryPath, { cwd: binaryDir })
+		new vscode.ProcessExecution(binaryPath, { cwd: binaryDir })
 	);
 	newTask.isBackground = true;
 	newTask.presentationOptions = {
