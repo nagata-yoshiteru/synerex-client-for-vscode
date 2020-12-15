@@ -67,6 +67,11 @@ Currently, no issues are found.
 
 ## Release Notes
 
+### 0.6.3
+
+- Minor behavior / appearance Update
+- Security Update
+
 ### 0.6.2
 
 - Fixed Bug for some environment
