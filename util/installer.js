@@ -34,7 +34,7 @@ function installSrv(context, channel, taskList, srv) {
             'Synerex Client',
             new vscode.ShellExecution(`git checkout ${srvVersion === "" ? "$(git describe --tags --abbrev=0)" : srvVersion}`, { cwd: srvDir })
         )).then(() => {
-            statusBar.setStatus({ label: srv.label, status: 'loading', list: taskList });
+            statusBar.setStatus({ label: srv.label, status: 'loading~spin', list: taskList });
             channel.appendLine('Installing ' + srv.name + '...');
         }, () => {
             channel.appendLine('Installing ' + srv.name + ' Failed. (Git)');

@@ -18,7 +18,7 @@ function activate(context) {
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "synerex-client-for-vscode" is now active!');
+	// console.log('Congratulations, your extension "synerex-client-for-vscode" is now active!');
 	const channel = vscode.window.createOutputChannel("Synerex Client");
 	const enableClient = vscode.workspace.getConfiguration(sxClient).get('enableClient');
 
@@ -78,8 +78,8 @@ function activate(context) {
 
 	channel.appendLine('Loaded Synerex Client for VSCode.');
 
-	const enableAutoStart = vscode.workspace.getConfiguration(sxClient).get('enableAutoStart');
-	console.log(`${sxClient}.enableAutoStart: `, enableAutoStart);
+	// const enableAutoStart = vscode.workspace.getConfiguration(sxClient).get('enableAutoStart');
+	// console.log(`${sxClient}.enableAutoStart: `, enableAutoStart);
 
 	context.subscriptions.push(startClientCommand);
 	context.subscriptions.push(stopClientCommand);
@@ -132,7 +132,7 @@ function reinstallServerContinue(context, channel, srv) {
 }
 
 function startSrv(context, channel, srv) {
-	statusBar.setStatus({ label: srv.label, status: 'loading', list: srvList });
+	statusBar.setStatus({ label: srv.label, status: 'loading~spin', list: srvList });
 	tcpscan.run({ host: 'localhost', port: srv.port }).then(
 		() => {
 			vscode.window.showWarningMessage(srv.name + ' seems to be already running.');
@@ -157,12 +157,14 @@ function startSrv(context, channel, srv) {
 
 function runBackgroundTask(context, channel, srv, binaryPath, binaryDir) {
 	console.log(context.storageUri.fsPath);
+	const newProc = new vscode.ProcessExecution(binaryPath, { cwd: binaryDir });
+	newProc.args = [""];
 	const newTask = new vscode.Task(
 		{ type: `${sxClient}.${srv.type}` },
 		vscode.TaskScope.Workspace,
 		srv.name,
 		'Synerex Client',
-		new vscode.ProcessExecution(binaryPath, { cwd: binaryDir })
+		newProc,
 	);
 	newTask.isBackground = true;
 	newTask.presentationOptions = {
