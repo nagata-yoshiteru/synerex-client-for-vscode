@@ -1,5 +1,9 @@
 # Change Log
 
+### 0.6.4
+
+- Security Update
+
 ### 0.6.3
 
 - Minor behavior / appearance Update
